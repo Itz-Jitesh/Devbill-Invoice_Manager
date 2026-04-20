@@ -15,7 +15,10 @@ export async function GET(request) {
     }
 
     await connectDB();
-    const clients = await Client.find({ userId: auth.user._id }).sort({ createdAt: -1 });
+    const clients = await Client.find({ 
+      userId: auth.user._id,
+      isActive: true // 🛡️ Hide soft-deleted clients
+    }).sort({ createdAt: -1 });
     return NextResponse.json(clients);
   } catch (error) {
     return NextResponse.json(

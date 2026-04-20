@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 import connectDB from './db';
 import User from '@/models/user.model';
 
 /**
- * Verify JWT from the Authorization: Bearer <token> header.
+ * Verify JWT from Cookie or Authorization header.
  *
  * Usage inside a route handler:
  *   const auth = await verifyAuth(request)
@@ -14,14 +15,21 @@ import User from '@/models/user.model';
  * @returns {{ user: object } | { error: string, status: number }}
  */
 export async function verifyAuth(request) {
-  const authHeader = request.headers.get('authorization');
+  // 1. Try to get token from Secure Cookie (Preferred)
+  const cookieStore = await cookies();
+  let token = cookieStore.get('devbill_token')?.value;
 
-  // 1. Check Authorization header format
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return { error: 'Please provide a valid authentication token', status: 401 };
+  // 2. Fallback to Authorization Header
+  if (!token) {
+    const authHeader = request.headers.get('authorization');
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    }
   }
 
-  const token = authHeader.split(' ')[1];
+  if (!token) {
+    return { error: 'Please provide a valid authentication token', status: 401 };
+  }
 
   try {
     // 2. Verify and decode JWT

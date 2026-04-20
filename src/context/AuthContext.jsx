@@ -95,7 +95,12 @@ export const AuthProvider = ({ children }) => {
   /**
    * Logout handler
    */
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
     authService.logout();
     setUser(null);
     setToken(null);

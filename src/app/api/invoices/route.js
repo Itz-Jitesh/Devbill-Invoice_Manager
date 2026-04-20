@@ -18,7 +18,10 @@ export async function GET(request) {
     }
 
     await connectDB();
-    const invoices = await Invoice.find({ userId: auth.user._id })
+    const invoices = await Invoice.find({ 
+      userId: auth.user._id,
+      status: { $ne: 'cancelled' } // 🛡️ Hide cancelled invoices in global list
+    })
       .populate('clientId', 'name email company')
       .sort({ date: -1 });
     return NextResponse.json(invoices);
@@ -53,32 +56,15 @@ export async function POST(request) {
     }
 
     // 2. Ownership Check: Verify client belongs to this user
-    try {
-      const clientIdRaw = body.clientId;
-      const userIdRaw = auth.user._id;
-      
-      console.log('DEBUG: Received clientId:', clientIdRaw, typeof clientIdRaw);
-      console.log('DEBUG: Received userId:', userIdRaw, typeof userIdRaw);
+    const clientId = new mongoose.Types.ObjectId(body.clientId);
+    const userId = new mongoose.Types.ObjectId(auth.user._id);
 
-      const clientId = new mongoose.Types.ObjectId(clientIdRaw);
-      const userId = new mongoose.Types.ObjectId(userIdRaw);
-
-      console.log('DEBUG: Querying Client with:', { _id: clientId, userId: userId });
-
-      const client = await Client.findOne({ _id: clientId, userId: userId });
-      if (!client) {
-        console.log('DEBUG: Client not found or access denied. Listing user clients for debug:');
-        const userClients = await Client.find({ userId }).select('_id name');
-        console.log('DEBUG: User clients:', userClients);
-
-        return NextResponse.json(
-          { error: 'Client not found or does not belong to this user' },
-          { status: 404 }
-        );
-      }
-    } catch (err) {
-      console.error('DEBUG: Ownership check error:', err.message);
-      return NextResponse.json({ error: 'Invalid ID format' }, { status: 400 });
+    const client = await Client.findOne({ _id: clientId, userId: userId });
+    if (!client) {
+      return NextResponse.json(
+        { error: 'Client not found or access denied' },
+        { status: 404 }
+      );
     }
 
     // 3. Atomic counter for sequential invoice number

@@ -43,17 +43,16 @@ export async function POST(request) {
       return NextResponse.json({ message: 'JWT_SECRET is not configured' }, { status: 500 });
     }
 
-    // 5. Generate JWT (7-day expiry — matches original Express backend)
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     );
 
-    // 6. Return token and user info
-    return NextResponse.json(
+    // 6. Set Secure HTTP-Only Cookie
+    const response = NextResponse.json(
       {
-        token,
+        token, // Still returning token for backward compatibility if needed
         user: {
           id: user._id,
           name: user.username,
@@ -63,6 +62,16 @@ export async function POST(request) {
       },
       { status: 200 }
     );
+
+    response.cookies.set('devbill_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    return response;
   } catch (error) {
     console.error('Login error:', error.message);
     return NextResponse.json(
