@@ -33,12 +33,22 @@ const InvoiceSchema = new mongoose.Schema({
     type: Date,
   },
   invoiceNumber: {
-    type: String,
-    unique: true,
+    type: Number,
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   }
 }, {
   timestamps: true
 });
+
+// Composite index for unique invoice numbers per user
+InvoiceSchema.index({ userId: 1, invoiceNumber: 1 }, { unique: true });
+// Index for common user queries
+InvoiceSchema.index({ userId: 1, status: 1 });
+InvoiceSchema.index({ userId: 1, createdAt: -1 });
 
 // Avoid re-compiling the model if it already exists
 export default mongoose.models.Invoice || mongoose.model('Invoice', InvoiceSchema);

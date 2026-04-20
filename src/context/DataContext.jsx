@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useToast } from '@/context/ToastContext';
 import { useNotifications } from '@/context/NotificationContext';
+import { useAuth } from '@/context/AuthContext';
 
 const DataContext = createContext();
 
@@ -29,6 +30,7 @@ const DataProviderInner = ({ children }) => {
   // Toast and notifications
   const { showToast } = useToast();
   const { addNotification } = useNotifications();
+  const { token, isAuthReady } = useAuth();
 
   // Helper to show toast and sync to notifications
   const notify = useCallback((message, type = 'info') => {
@@ -40,6 +42,15 @@ const DataProviderInner = ({ children }) => {
   }, [showToast, addNotification]);
 
   const fetchInvoices = useCallback(async (force = false) => {
+    // Wait for auth to be initialized
+    if (!isAuthReady) return;
+    
+    // If auth is ready but no token, we can't fetch (logged out/session expired)
+    if (!token) {
+      fetchedInvoicesRef.current = false;
+      return;
+    }
+
     // Prevent concurrent fetches using ref
     if (fetchingInvoicesRef.current && !force) return;
     if (fetchedInvoicesRef.current && !force) return;
@@ -48,7 +59,11 @@ const DataProviderInner = ({ children }) => {
     setLoading(prev => ({ ...prev, invoices: true }));
     setError(null);
     try {
-      const res = await fetch('/api/invoices');
+      const res = await fetch('/api/invoices', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       if (res.ok) {
         setInvoices(data);
@@ -62,9 +77,18 @@ const DataProviderInner = ({ children }) => {
       setLoading(prev => ({ ...prev, invoices: false }));
       fetchingInvoicesRef.current = false;
     }
-  }, []);
+  }, [token]);
 
   const fetchClients = useCallback(async (force = false) => {
+    // Wait for auth to be initialized
+    if (!isAuthReady) return;
+    
+    // If auth is ready but no token, we can't fetch
+    if (!token) {
+      fetchedClientsRef.current = false;
+      return;
+    }
+
     // Prevent concurrent fetches using ref
     if (fetchingClientsRef.current && !force) return;
     if (fetchedClientsRef.current && !force) return;
@@ -73,7 +97,11 @@ const DataProviderInner = ({ children }) => {
     setLoading(prev => ({ ...prev, clients: true }));
     setError(null);
     try {
-      const res = await fetch('/api/clients');
+      const res = await fetch('/api/clients', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       if (res.ok) {
         setClients(data);
@@ -87,7 +115,7 @@ const DataProviderInner = ({ children }) => {
       setLoading(prev => ({ ...prev, clients: false }));
       fetchingClientsRef.current = false;
     }
-  }, []);
+  }, [token]);
 
   // Refresh methods for specific events (add/updated/delete)
   const refreshInvoices = useCallback(() => fetchInvoices(true), [fetchInvoices]);
@@ -101,7 +129,10 @@ const DataProviderInner = ({ children }) => {
     try {
       const res = await fetch('/api/invoices', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(invoiceData),
       });
       const newInvoice = await res.json();
@@ -120,7 +151,7 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to create invoice', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const updateInvoice = useCallback(async (id, updatedData) => {
     try {
@@ -128,7 +159,10 @@ const DataProviderInner = ({ children }) => {
       const idString = String(id);
       const res = await fetch(`/api/invoices/${idString}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(updatedData),
       });
       const updatedInvoice = await res.json();
@@ -149,13 +183,18 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to update invoice', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const deleteInvoice = useCallback(async (id) => {
     try {
       // Ensure id is a string
       const idString = String(id);
-      const res = await fetch(`/api/invoices/${idString}`, { method: 'DELETE' });
+      const res = await fetch(`/api/invoices/${idString}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to delete invoice');
 
@@ -174,14 +213,17 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to delete invoice', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const markPaid = useCallback(async (id) => {
     try {
       const idString = String(id);
       const res = await fetch(`/api/invoices/${idString}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status: 'paid', paidAt: new Date().toISOString() }),
       });
       const updatedInvoice = await res.json();
@@ -202,13 +244,16 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to mark invoice as paid', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const addClient = useCallback(async (clientData) => {
     try {
       const res = await fetch('/api/clients', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(clientData),
       });
       const newClient = await res.json();
@@ -227,7 +272,7 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to create client', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const updateClient = useCallback(async (id, updatedData) => {
     try {
@@ -235,7 +280,10 @@ const DataProviderInner = ({ children }) => {
       const idString = String(id);
       const res = await fetch(`/api/clients/${idString}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify(updatedData),
       });
       const updatedClient = await res.json();
@@ -256,13 +304,18 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to update client', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   const deleteClient = useCallback(async (id) => {
     try {
       // Ensure id is a string
       const idString = String(id);
-      const res = await fetch(`/api/clients/${idString}`, { method: 'DELETE' });
+      const res = await fetch(`/api/clients/${idString}`, { 
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to delete client');
 
@@ -281,7 +334,7 @@ const DataProviderInner = ({ children }) => {
       notify('Failed to delete client', 'error');
       return { success: false, error: err.message };
     }
-  }, [notify]);
+  }, [notify, token]);
 
   // Computed stats for Dashboard
   const stats = useMemo(() => ({

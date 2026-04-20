@@ -27,14 +27,19 @@ export default function InvoicesPage() {
   // Filtering logic
   const filteredInvoices = useMemo(() => {
     let result = [...invoices];
-    if (selectedStatus !== 'All') {
+    
+    // Hide cancelled invoices unless specifically requested
+    if (selectedStatus === 'All') {
+      result = result.filter(inv => inv.status !== 'cancelled');
+    } else {
       result = result.filter((inv) => inv.status?.toLowerCase() === selectedStatus.toLowerCase());
     }
+
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (inv) => 
-          inv.invoiceNumber?.toLowerCase().includes(q) || 
+          String(inv.invoiceNumber || '').toLowerCase().includes(q) || 
           inv.clientId?.name?.toLowerCase().includes(q) ||
           inv.title?.toLowerCase().includes(q)
       );
