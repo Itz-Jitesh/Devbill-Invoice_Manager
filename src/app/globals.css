@@ -141,3 +141,8 @@
 .font-label {
   font-family: 'Manrope', sans-serif;
 }
+
+/* Global Fix: Ensure all buttons show pointer cursor */
+button {
+  cursor: pointer;
+}
