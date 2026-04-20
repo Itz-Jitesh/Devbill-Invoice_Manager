@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>DevBill - New Invoice</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface": "#0e1322",
+                        "on-surface": "#dee1f7",
+                        "on-primary-fixed": "#100069",
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#261a00",
+                        "error": "#ffb4ab",
+                        "primary": "#c4c0ff",
+                        "surface-variant": "#2f3445",
+                        "on-surface-variant": "#c7c4d8",
+                        "on-secondary-fixed-variant": "#005137",
+                        "on-tertiary": "#402d00",
+                        "inverse-surface": "#dee1f7",
+                        "on-background": "#dee1f7",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "on-primary": "#2000a4",
+                        "inverse-on-surface": "#2b3040",
+                        "surface-container-low": "#161b2b",
+                        "on-secondary-container": "#00452e",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "surface-bright": "#343949",
+                        "outline": "#918fa1",
+                        "surface-container-lowest": "#090e1c",
+                        "primary-fixed": "#e3dfff",
+                        "on-tertiary-container": "#372700",
+                        "surface-container": "#1a1f2f",
+                        "primary-container": "#8781ff",
+                        "tertiary-fixed": "#ffdf9f",
+                        "background": "#0e1322",
+                        "secondary-container": "#00bd85",
+                        "inverse-primary": "#4f44e2",
+                        "secondary-fixed": "#68fcbf",
+                        "on-primary-fixed-variant": "#3622ca",
+                        "surface-tint": "#c4c0ff",
+                        "primary-fixed-dim": "#c4c0ff",
+                        "tertiary-container": "#b88900",
+                        "tertiary": "#f9bd22",
+                        "on-secondary": "#003825",
+                        "on-primary-container": "#1b0091",
+                        "outline-variant": "#464555",
+                        "on-secondary-fixed": "#002114",
+                        "secondary": "#45dfa4",
+                        "surface-container-high": "#25293a",
+                        "secondary-fixed-dim": "#45dfa4",
+                        "surface-dim": "#0e1322",
+                        "surface-container-highest": "#2f3445"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #0e1322;
+            color: #dee1f7;
+            font-family: 'Manrope', sans-serif;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+<!-- SideNavBar (Authority: JSON & Strategy) -->
+<nav class="fixed left-0 top-0 h-screen w-72 flex flex-col py-8 bg-[#161b2b] relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-white/10">
+<div class="px-8 mb-12">
+<h1 class="text-2xl font-bold tracking-tight text-white font-[Noto_Serif]">DevBill</h1>
+<p class="text-on-surface-variant text-xs font-label mt-1">Premium Billing</p>
+</div>
+<div class="flex flex-col gap-1 flex-grow">
+<!-- Dashboard Tab -->
+<a class="flex items-center gap-4 px-8 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium font-body">Dashboard</span>
+</a>
+<!-- Clients Tab -->
+<a class="flex items-center gap-4 px-8 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium font-body">Clients</span>
+</a>
+<!-- Invoices Tab (ACTIVE) -->
+<a class="flex items-center gap-4 px-8 py-4 text-[#c4c0ff] bg-white/5 border-r-4 border-[#c4c0ff] translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-bold font-body">Invoices</span>
+</a>
+<!-- Settings Tab -->
+<a class="flex items-center gap-4 px-8 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-medium font-body">Settings</span>
+</a>
+</div>
+<div class="px-6 mt-auto">
+<button class="w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-label font-bold text-sm tracking-wide uppercase shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform">
+                Create New
+            </button>
+</div>
+</nav>
+<!-- Main Content Canvas -->
+<main class="ml-72 min-h-screen px-20 py-12">
+<!-- Top Navigation Bar (Hybrid JSON) -->
+<header class="flex justify-between items-center w-full mb-12">
+<div class="flex flex-col">
+<!-- Breadcrumbs -->
+<nav class="flex items-center gap-2 text-xs font-label text-on-surface-variant mb-4 tracking-wider uppercase">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<span class="material-symbols-outlined text-[10px]" data-icon="chevron_right">chevron_right</span>
+<a class="hover:text-primary transition-colors" href="#">Invoices</a>
+<span class="material-symbols-outlined text-[10px]" data-icon="chevron_right">chevron_right</span>
+<span class="text-white">New</span>
+</nav>
+<h2 class="text-5xl font-headline font-bold text-white tracking-tight">New Invoice</h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="glass px-4 py-2 rounded-full flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-body text-white placeholder:text-on-surface-variant/50 w-48" placeholder="Search invoices..." type="text"/>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-on-surface-variant hover:text-white transition-colors" data-icon="notifications">notifications</button>
+<div class="w-10 h-10 rounded-full glass flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a creative director in soft cinematic studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDne6EdsyqrSoGipF5aAoW6A1K3KYshGE97o11imwjsZyrM_2EPKVK3JKZiQujyeQ9cnPpGzokZC9RXpm5Cx2lOwdzoUOhZ2q95BCdD2sE6H02YTBZ0ERwah0kMpVcpJsQK2YCQ2kM4ILLh1f__5yUEmflQKFRW4ArOPg7rm8HInEDoOZmJIRxJ_0GrYN_elnnukqvZqjoRywnCu2LYBni0fFl3_GN8jkm4MxRgmbkKJv3EFeFQhKVKSWVH4eakbdIXVIwyFMfmP0o"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Two Column Layout -->
+<div class="grid grid-cols-12 gap-12 items-start">
+<!-- Left Column: Form & Line Items -->
+<div class="col-span-8 flex flex-col gap-8">
+<!-- General Information Glass Card -->
+<section class="glass p-10 rounded-xl">
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-label text-on-surface-variant uppercase tracking-widest px-1">Select Client</label>
+<div class="relative group">
+<select class="w-full bg-surface-container-highest/40 border border-white/10 rounded-xl px-4 py-4 text-on-surface font-body appearance-none focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all">
+<option>Nebula Creative Agency</option>
+<option>Starlight Software</option>
+<option>Lumina Designs</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-label text-on-surface-variant uppercase tracking-widest px-1">Invoice Number</label>
+<input class="w-full bg-surface-container-highest/40 border border-white/10 rounded-xl px-4 py-4 text-on-surface font-body focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all" type="text" value="INV-2024-001"/>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-label text-on-surface-variant uppercase tracking-widest px-1">Issue Date</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest/40 border border-white/10 rounded-xl px-4 py-4 text-on-surface font-body focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all [color-scheme:dark]" type="date"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-label text-on-surface-variant uppercase tracking-widest px-1">Due Date</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest/40 border border-white/10 rounded-xl px-4 py-4 text-on-surface font-body focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all [color-scheme:dark]" type="date"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Line Items Section -->
+<section class="flex flex-col gap-6">
+<h3 class="text-2xl font-headline font-bold text-white px-2">Line Items</h3>
+<div class="glass rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-white/5">
+<th class="px-6 py-5 text-xs font-label text-on-surface-variant uppercase tracking-widest font-semibold">Description</th>
+<th class="px-6 py-5 text-xs font-label text-on-surface-variant uppercase tracking-widest font-semibold w-24 text-center">Qty</th>
+<th class="px-6 py-5 text-xs font-label text-on-surface-variant uppercase tracking-widest font-semibold w-40">Rate</th>
+<th class="px-6 py-5 text-xs font-label text-on-surface-variant uppercase tracking-widest font-semibold w-40 text-right">Amount</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Row 1 -->
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="px-6 py-6">
+<input class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm font-body text-on-surface focus:outline-none focus:border-primary/50" placeholder="Service or product description" type="text" value="Website UI/UX Redesign - Q3 Phase"/>
+</td>
+<td class="px-6 py-6">
+<input class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-sm font-body text-on-surface text-center focus:outline-none focus:border-primary/50" type="number" value="1"/>
+</td>
+<td class="px-6 py-6">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg pl-6 pr-4 py-2 text-sm font-body text-on-surface focus:outline-none focus:border-primary/50" type="text" value="4,500.00"/>
+</div>
+</td>
+<td class="px-6 py-6 text-right font-body font-semibold text-white">
+                                        $4,500.00
+                                    </td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-white/5 transition-colors">
+<td class="px-6 py-6">
+<input class="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2 text-sm font-body text-on-surface focus:outline-none focus:border-primary/50" placeholder="Service or product description" type="text" value="Brand Identity Workshop"/>
+</td>
+<td class="px-6 py-6">
+<input class="w-full bg-white/5 border border-white/10 rounded-lg px-2 py-2 text-sm font-body text-on-surface text-center focus:outline-none focus:border-primary/50" type="number" value="1"/>
+</td>
+<td class="px-6 py-6">
+<div class="relative">
+<span class="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-xs">$</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-lg pl-6 pr-4 py-2 text-sm font-body text-on-surface focus:outline-none focus:border-primary/50" type="text" value="1,200.00"/>
+</div>
+</td>
+<td class="px-6 py-6 text-right font-body font-semibold text-white">
+                                        $1,200.00
+                                    </td>
+</tr>
+</tbody>
+</table>
+<div class="p-6">
+<button class="flex items-center gap-2 text-primary hover:text-white font-label text-sm font-bold tracking-wide transition-all group">
+<span class="material-symbols-outlined text-xl" data-icon="add_circle">add_circle</span>
+                                Add Line Item
+                            </button>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Column: Summary & Actions -->
+<aside class="col-span-4 sticky top-12 flex flex-col gap-8">
+<!-- Status Toggle -->
+<div class="glass p-2 rounded-full flex items-center">
+<button class="flex-1 py-3 text-xs font-label font-bold tracking-widest rounded-full bg-white/10 text-white shadow-lg transition-all">DRAFT</button>
+<button class="flex-1 py-3 text-xs font-label font-bold tracking-widest text-on-surface-variant hover:text-white transition-all">SENT</button>
+<button class="flex-1 py-3 text-xs font-label font-bold tracking-widest text-on-surface-variant hover:text-white transition-all">PAID</button>
+</div>
+<!-- Invoice Summary Card -->
+<div class="glass p-8 rounded-xl flex flex-col gap-6 shadow-2xl shadow-black/40">
+<h4 class="text-xs font-label text-on-surface-variant uppercase tracking-[0.2em] font-bold">Summary</h4>
+<div class="flex flex-col gap-4">
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body text-sm">Subtotal</span>
+<span class="font-body text-sm text-white font-semibold">$5,700.00</span>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body text-sm">Tax (%)</span>
+<div class="flex items-center gap-2">
+<input class="w-16 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-right text-white focus:outline-none focus:border-primary/50" type="number" value="10"/>
+<span class="text-xs">%</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-on-surface-variant">
+<span class="font-body text-sm">Discount</span>
+<div class="flex items-center gap-2">
+<span class="text-xs">$</span>
+<input class="w-24 bg-white/5 border border-white/10 rounded-lg px-2 py-1 text-xs text-right text-white focus:outline-none focus:border-primary/50" type="number" value="0"/>
+</div>
+</div>
+</div>
+<div class="h-[1px] w-full bg-white/10 mt-2"></div>
+<div class="flex justify-between items-end mt-2">
+<span class="font-headline font-bold text-white text-lg">Total</span>
+<div class="text-right">
+<span class="block text-[2.5rem] font-headline font-bold text-white leading-none">$6,270.00</span>
+<span class="text-[10px] font-label text-primary uppercase tracking-tighter">USD (Incl. Tax)</span>
+</div>
+</div>
+<div class="flex flex-col gap-3 mt-4">
+<button class="w-full py-5 rounded-xl bg-[#6C63FF] text-white font-label font-bold tracking-widest uppercase text-sm hover:bg-[#5a52e6] shadow-lg shadow-[#6C63FF]/30 transition-all active:scale-95">
+                            Save Invoice
+                        </button>
+<button class="w-full py-5 rounded-xl border border-white/10 text-on-surface font-label font-bold tracking-widest uppercase text-sm hover:bg-white/5 transition-all">
+                            Preview
+                        </button>
+</div>
+</div>
+<!-- Subtle Insight/Info Tip -->
+<div class="px-4 text-center">
+<p class="text-[11px] font-label text-on-surface-variant/60 italic leading-relaxed">
+                        "Precision in billing is the signature of excellence."<br/>
+                        Invoice will be automatically formatted for PDF export.
+                    </p>
+</div>
+</aside>
+</div>
+</main>
+<!-- Background Decorative Gradients -->
+<div class="fixed top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none -z-10"></div>
+<div class="fixed bottom-[-10%] left-[20%] w-[30vw] h-[30vw] rounded-full bg-secondary-container/5 blur-[100px] pointer-events-none -z-10"></div>
+</body></html>

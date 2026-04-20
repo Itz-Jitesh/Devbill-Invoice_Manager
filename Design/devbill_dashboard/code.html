@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@300;400&amp;family=Manrope:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary-fixed": "#100069",
+              "inverse-surface": "#dee1f7",
+              "primary": "#c4c0ff",
+              "on-secondary-fixed-variant": "#413f81",
+              "tertiary-fixed-dim": "#ffb785",
+              "secondary-container": "#444183",
+              "secondary-fixed-dim": "#c4c0ff",
+              "primary-container": "#8781ff",
+              "on-primary-container": "#1b0091",
+              "tertiary": "#ffb785",
+              "on-error": "#690005",
+              "background": "#0e1322",
+              "surface-container-high": "#25293a",
+              "on-tertiary-fixed": "#301400",
+              "on-error-container": "#ffdad6",
+              "tertiary-fixed": "#ffdcc6",
+              "on-surface": "#dee1f7",
+              "secondary-fixed": "#e3dfff",
+              "surface-bright": "#343949",
+              "primary-fixed": "#e3dfff",
+              "surface-container-low": "#161b2b",
+              "secondary": "#c4c0ff",
+              "outline-variant": "#464555",
+              "outline": "#918fa1",
+              "on-tertiary-fixed-variant": "#713700",
+              "surface": "#0e1322",
+              "on-secondary-container": "#b4b1fc",
+              "error": "#ffb4ab",
+              "surface-container": "#1a1f2f",
+              "on-primary-fixed-variant": "#3622ca",
+              "on-surface-variant": "#c7c4d8",
+              "tertiary-container": "#db761f",
+              "on-primary": "#2000a4",
+              "primary-fixed-dim": "#c4c0ff",
+              "inverse-primary": "#4f44e2",
+              "on-secondary": "#2b2769",
+              "on-tertiary-container": "#461f00",
+              "on-background": "#dee1f7",
+              "surface-dim": "#0e1322",
+              "surface-variant": "#2f3445",
+              "surface-container-lowest": "#090e1c",
+              "error-container": "#93000a",
+              "surface-tint": "#c4c0ff",
+              "inverse-on-surface": "#2b3040",
+              "on-tertiary": "#502500"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-glass {
+            background: rgba(14, 19, 34, 0.8);
+            backdrop-filter: blur(24px);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body min-h-screen">
+<!-- SideNavBar (Predicted Component) -->
+<aside class="fixed left-0 top-0 h-full w-64 flex flex-col p-6 border-r border-white/10 bg-[#0e1322]/80 backdrop-blur-xl z-50">
+<div class="mb-12 px-4">
+<h1 class="text-2xl font-light tracking-tight text-[#dee1f7] font-serif">DevBill</h1>
+<p class="text-xs text-on-surface-variant font-medium mt-1">Freelance Manager</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Active state for Dashboard -->
+<a class="flex items-center gap-3 px-4 py-3 bg-[#c4c0ff]/10 text-[#c4c0ff] rounded-xl transition-all duration-300 group active:scale-95" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#dee1f7] hover:bg-white/5 transition-all duration-300 rounded-xl group" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="group">group</span>
+<span class="font-medium text-sm">Clients</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#dee1f7] hover:bg-white/5 transition-all duration-300 rounded-xl group" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="receipt_long">receipt_long</span>
+<span class="font-medium text-sm">Invoices</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#dee1f7] hover:bg-white/5 transition-all duration-300 rounded-xl group" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span class="font-medium text-sm">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-6 border-t border-white/5">
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d8] hover:text-[#dee1f7] transition-all duration-300 rounded-xl group" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="account_circle">account_circle</span>
+<span class="font-medium text-sm">Profile</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="pl-64 min-h-screen">
+<!-- TopAppBar (Predicted Component) -->
+<header class="flex justify-between items-center w-full px-12 py-8 bg-transparent">
+<div class="flex-1 max-w-xl">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-3 pl-12 pr-6 text-sm text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search invoices or clients..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6 ml-8">
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary/20 rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors focus:ring-2 focus:ring-primary/20 rounded-full p-2">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full overflow-hidden border border-white/10">
+<img alt="Alex's Profile" class="w-full h-full object-cover" data-alt="professional headshot of a creative professional man with a friendly expression in a modern studio environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUxVqqrmT_GWnxiuzXyXB1mOqsROGvMGN7E7HwsE30WnD7ZsgBz-yrMj8Zaai-B9GgQvtDaBqQwxd2gCYhEmS2nqxL6OpsijmqU7lpxjvo8VKuP9raPbaf60oWLhJeYCYl_pA4uC-ShPsfbEhi7TO3kNQhnTsr7IvUtqFKO55Hr8Itctk5A0j5ZZgFGQwXHFrxIb8fkWBNIJo6TSyMWcH7tdHO-_g60fshnb5AJ-RqXMwRHbvvyOQBtcK7edtjVkrB4It-lAXyzKw"/>
+</div>
+</div>
+</header>
+<!-- Page Content -->
+<div class="px-12 pb-20 space-y-12">
+<!-- Greeting Section -->
+<section>
+<h2 class="text-5xl font-headline font-light tracking-tight text-on-surface mb-2">Good morning, Alex 👋</h2>
+<p class="text-on-surface-variant max-w-2xl font-body leading-relaxed">Your freelance business grew by 12% this month. You have 3 pending invoices that need attention.</p>
+</section>
+<!-- Stats Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Stat Card 1 -->
+<div class="glass-card p-8 rounded-xl shadow-[0_24px_48px_-12px_rgba(108,99,255,0.04)]">
+<div class="flex justify-between items-start mb-6">
+<span class="text-on-surface-variant font-medium text-sm">Total Earned</span>
+<span class="flex items-center text-[#34D399] text-xs font-bold bg-[#34D399]/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+12%
+                        </span>
+</div>
+<div class="text-3xl font-headline font-light text-on-surface">$42,850</div>
+</div>
+<!-- Stat Card 2 -->
+<div class="glass-card p-8 rounded-xl shadow-[0_24px_48px_-12px_rgba(108,99,255,0.04)]">
+<div class="flex justify-between items-start mb-6">
+<span class="text-on-surface-variant font-medium text-sm">Invoices Sent</span>
+<span class="flex items-center text-primary text-xs font-bold bg-primary/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+5%
+                        </span>
+</div>
+<div class="text-3xl font-headline font-light text-on-surface">18</div>
+</div>
+<!-- Stat Card 3 -->
+<div class="glass-card p-8 rounded-xl shadow-[0_24px_48px_-12px_rgba(108,99,255,0.04)]">
+<div class="flex justify-between items-start mb-6">
+<span class="text-on-surface-variant font-medium text-sm">Pending Amount</span>
+<span class="flex items-center text-[#FBBF24] text-xs font-bold bg-[#FBBF24]/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+2%
+                        </span>
+</div>
+<div class="text-3xl font-headline font-light text-on-surface">$8,240</div>
+</div>
+<!-- Stat Card 4 -->
+<div class="glass-card p-8 rounded-xl shadow-[0_24px_48px_-12px_rgba(108,99,255,0.04)]">
+<div class="flex justify-between items-start mb-6">
+<span class="text-on-surface-variant font-medium text-sm">Paid This Month</span>
+<span class="flex items-center text-teal-400 text-xs font-bold bg-teal-400/10 px-2 py-1 rounded-full">
+<span class="material-symbols-outlined text-sm mr-1">trending_up</span>+8%
+                        </span>
+</div>
+<div class="text-3xl font-headline font-light text-on-surface">$12,100</div>
+</div>
+</section>
+<!-- Table Section -->
+<section class="space-y-6">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="text-2xl font-headline font-light text-on-surface">Recent Invoices</h3>
+<p class="text-on-surface-variant text-sm mt-1">Manage your latest billing activities and statuses.</p>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary font-semibold px-6 py-3 rounded-xl flex items-center gap-2 hover:opacity-90 transition-all active:scale-95 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+<span>Create Invoice</span>
+</button>
+</div>
+<div class="glass-card rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/50">
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Client</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Amount</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date</th>
+<th class="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<!-- Table Row 1 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-high border border-white/5">
+<img alt="Lumina Studio" class="w-full h-full object-cover" data-alt="vibrant abstract tech studio logo with modern geometric shapes and high-end aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBS9rIFn_k_xn2_aTq5lwtiHHY_y97ANHD86eexJ1CfS_jJY-Ul2ymeyFuvguyaqmwjl7jYVXxpQa4UEteK7NCJXoA1ETh9zVWvz_S0dAd8GOm6LllYN_8fLT_NAwI1rY9dsSsp6-MvYDdzRDHDk7efxhxbhmt4Wmx91LqStKkTvYVfEP1yq4aZ980qshGOxsy5NJBb3tB56r0ggjFY-Hg0QJBiIj4sRFRn3jSQ80ypmeLXCSb-Z-YCkeq3TJwKZALm907EtEYbuB0"/>
+</div>
+<div>
+<div class="font-medium text-on-surface">Lumina Studio</div>
+<div class="text-xs text-on-surface-variant">Design System Refactor</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-medium text-on-surface">$4,500.00</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary/10 text-primary">
+                                        Sent
+                                    </span>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Oct 24, 2023</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 2 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-high border border-white/5">
+<img alt="Vertex Corp" class="w-full h-full object-cover" data-alt="minimalist architecture firm logo on a clean grey background with professional lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6e-A28RNu7Bem3IOyKvbXiwY7VzuJyDcq9PSgomASbOR66lMtg3wayv2N7FCpSKPz_-BIJ309ukKJTbvilj3WHXqSISIUU9qLNiMeMBjXRIOUciVP4vWtbDRzhUw1PB_jRZhTIYsvtyPS6K3PaKCA6Niodw-ep1vHvfvstegcuhtiI9KTyWHBXJTIrEadjo0ZYIUGE61uefK3ar117D5r8VUo4APCuwB_moJPyAufpIL_SWgYieXLRhbcFqtQJdy_vFKvHAkrhIc"/>
+</div>
+<div>
+<div class="font-medium text-on-surface">Vertex Corp</div>
+<div class="text-xs text-on-surface-variant">Q4 Web Maintenance</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-medium text-on-surface">$2,800.00</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-[#34D399]/10 text-[#34D399]">
+                                        Paid
+                                    </span>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Oct 21, 2023</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Table Row 3 -->
+<tr class="hover:bg-white/5 transition-colors group">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<div class="h-10 w-10 rounded-full overflow-hidden bg-surface-container-high border border-white/5">
+<img alt="Flow Agency" class="w-full h-full object-cover" data-alt="creative branding agency interior with soft morning light and designer furniture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOCph2yuGsb_hVc3CeUbjuHnESCFDmdvi7ZNtlAXB1AWZAztZNWYulJSQTymw_fXTFruggC8W04qqIayhralI9OjiUXp6Sx-eKYacD3-QAgz8CZisnpkyPV00XCkUQX7O3fX9KS7d1Q63SVwCinqd9AaL6JZX6fT59cm_FExd9Uz045gIlmtiJ2iR0Zxfdt1QlD7IhLZN0foiwRpE2_enX_Y9QJDlfVUZy-TrRqERcci6hr2meRnxc2uJ2hLS3w4VT6SkGoVUZLD8"/>
+</div>
+<div>
+<div class="font-medium text-on-surface">Flow Agency</div>
+<div class="text-xs text-on-surface-variant">Branding Concepts</div>
+</div>
+</div>
+</td>
+<td class="px-8 py-6">
+<div class="font-medium text-on-surface">$7,200.00</div>
+</td>
+<td class="px-8 py-6">
+<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-slate-500/10 text-slate-400">
+                                        Draft
+                                    </span>
+</td>
+<td class="px-8 py-6 text-sm text-on-surface-variant">Oct 18, 2023</td>
+<td class="px-8 py-6 text-right">
+<div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">visibility</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- Bottom Gradient Decor -->
+<div class="fixed bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full -z-10 pointer-events-none translate-x-1/2 translate-y-1/2"></div>
+</div>
+</main>
+</body></html>

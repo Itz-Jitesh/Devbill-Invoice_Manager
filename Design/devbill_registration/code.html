@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Register | Atelier</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@300;400&amp;family=Manrope:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#db761f",
+                        "primary-fixed-dim": "#c4c0ff",
+                        "on-background": "#dee1f7",
+                        "on-secondary-fixed-variant": "#413f81",
+                        "surface-dim": "#0e1322",
+                        "surface-container-highest": "#2f3445",
+                        "secondary-fixed": "#e3dfff",
+                        "secondary": "#c4c0ff",
+                        "secondary-fixed-dim": "#c4c0ff",
+                        "outline-variant": "#464555",
+                        "tertiary-fixed": "#ffdcc6",
+                        "surface-container-low": "#161b2b",
+                        "primary-container": "#8781ff",
+                        "inverse-primary": "#4f44e2",
+                        "surface-bright": "#343949",
+                        "on-tertiary-container": "#461f00",
+                        "secondary-container": "#444183",
+                        "surface-container-lowest": "#090e1c",
+                        "tertiary-fixed-dim": "#ffb785",
+                        "background": "#0e1322",
+                        "outline": "#918fa1",
+                        "on-surface-variant": "#c7c4d8",
+                        "on-primary": "#2000a4",
+                        "on-tertiary-fixed-variant": "#713700",
+                        "on-tertiary": "#502500",
+                        "primary": "#c4c0ff",
+                        "surface-variant": "#2f3445",
+                        "inverse-on-surface": "#2b3040",
+                        "surface-tint": "#c4c0ff",
+                        "on-primary-fixed-variant": "#3622ca",
+                        "error": "#ffb4ab",
+                        "inverse-surface": "#dee1f7",
+                        "tertiary": "#ffb785",
+                        "on-tertiary-fixed": "#301400",
+                        "on-error-container": "#ffdad6",
+                        "on-error": "#690005",
+                        "primary-fixed": "#e3dfff",
+                        "on-surface": "#dee1f7",
+                        "surface-container": "#1a1f2f",
+                        "surface": "#0e1322",
+                        "on-secondary": "#2b2769",
+                        "on-primary-container": "#1b0091",
+                        "on-primary-fixed": "#100069",
+                        "error-container": "#93000a",
+                        "surface-container-high": "#25293a",
+                        "on-secondary-container": "#b4b1fc",
+                        "on-secondary-fixed": "#150f54"
+                    },
+                    fontFamily: {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: rgba(47, 52, 69, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(196, 192, 255, 0.1);
+        }
+        .orb-indigo {
+            background: radial-gradient(circle, rgba(196, 192, 255, 0.15) 0%, rgba(196, 192, 255, 0) 70%);
+        }
+        .orb-teal {
+            background: radial-gradient(circle, rgba(135, 129, 255, 0.1) 0%, rgba(135, 129, 255, 0) 70%);
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface selection:bg-primary/30 min-h-screen relative overflow-x-hidden flex flex-col">
+<!-- Background Orbs -->
+<div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] orb-indigo rounded-full blur-[120px] pointer-events-none z-0"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] orb-teal rounded-full blur-[120px] pointer-events-none z-0"></div>
+<main class="flex-grow flex items-center justify-center p-6 md:p-12 z-10">
+<!-- Center Registration Card -->
+<div class="glass-card w-full max-w-[480px] rounded-3xl p-8 md:p-12 shadow-[0_24px_48px_-12px_rgba(196,192,255,0.04)]">
+<!-- Progress Hint -->
+<div class="flex justify-center mb-8">
+<span class="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant bg-surface-container-high/40 px-3 py-1 rounded-full border border-outline-variant/20">
+                    Step 1 of 1
+                </span>
+</div>
+<!-- Header -->
+<div class="text-center mb-10">
+<h1 class="font-headline text-3xl md:text-4xl font-light text-on-surface tracking-tight mb-3">Create your account</h1>
+<p class="text-on-surface-variant font-body font-light text-sm md:text-base">Start sending professional invoices today.</p>
+</div>
+<!-- Registration Form -->
+<form class="space-y-6">
+<!-- Full Name -->
+<div class="group">
+<label class="block text-xs font-label font-medium text-on-surface-variant/70 uppercase tracking-widest mb-2 px-1" for="name">Full Name</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high/30 border-none border-b-2 border-outline-variant/30 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline/50 focus:ring-0 focus:border-primary transition-all duration-300 text-sm" id="name" name="name" placeholder="John Doe" type="text"/>
+<div class="absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-500 group-focus-within:w-full"></div>
+</div>
+</div>
+<!-- Email Address -->
+<div class="group">
+<label class="block text-xs font-label font-medium text-on-surface-variant/70 uppercase tracking-widest mb-2 px-1" for="email">Email Address</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high/30 border-none border-b-2 border-outline-variant/30 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline/50 focus:ring-0 focus:border-primary transition-all duration-300 text-sm" id="email" name="email" placeholder="name@company.com" type="email"/>
+<div class="absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-500 group-focus-within:w-full"></div>
+</div>
+</div>
+<!-- Password -->
+<div class="group">
+<label class="block text-xs font-label font-medium text-on-surface-variant/70 uppercase tracking-widest mb-2 px-1" for="password">Password</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high/30 border-none border-b-2 border-outline-variant/30 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline/50 focus:ring-0 focus:border-primary transition-all duration-300 text-sm" id="password" name="password" placeholder="••••••••" type="password"/>
+<div class="absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-500 group-focus-within:w-full"></div>
+</div>
+</div>
+<!-- Confirm Password -->
+<div class="group">
+<label class="block text-xs font-label font-medium text-on-surface-variant/70 uppercase tracking-widest mb-2 px-1" for="confirm_password">Confirm Password</label>
+<div class="relative">
+<input class="w-full bg-surface-container-high/30 border-none border-b-2 border-outline-variant/30 rounded-xl px-4 py-3.5 text-on-surface placeholder:text-outline/50 focus:ring-0 focus:border-primary transition-all duration-300 text-sm" id="confirm_password" name="confirm_password" placeholder="••••••••" type="password"/>
+<div class="absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-500 group-focus-within:w-full"></div>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-4">
+<button class="w-full py-4 rounded-xl bg-gradient-to-br from-primary to-primary-container text-on-primary-fixed font-label font-semibold tracking-wide hover:shadow-[0_0_24px_rgba(196,192,255,0.25)] active:scale-[0.98] transition-all duration-300" type="submit">
+                        Get Started
+                    </button>
+</div>
+</form>
+<!-- Footer Link -->
+<div class="mt-10 text-center">
+<p class="text-sm font-body text-on-surface-variant/80">
+                    Already have an account? 
+                    <a class="text-primary font-medium hover:text-on-surface transition-colors duration-200 ml-1" href="#">Sign in.</a>
+</p>
+</div>
+</div>
+</main>
+<!-- Simple Footer (Legal) -->
+<footer class="p-8 text-center z-10">
+<div class="flex flex-wrap justify-center gap-6 text-[11px] font-label uppercase tracking-[0.15em] text-on-surface-variant/50">
+<a class="hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-primary transition-colors" href="#">Support</a>
+</div>
+<p class="mt-4 text-[10px] text-on-surface-variant/30 font-label uppercase tracking-widest">
+            © 2024 Atelier Digital. All rights reserved.
+        </p>
+</footer>
+</body></html>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - The Curator</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-fixed-variant": "#5c4300",
+                        "surface-bright": "#343949",
+                        "error": "#ffb4ab",
+                        "on-error": "#690005",
+                        "surface-container-low": "#161b2b",
+                        "on-error-container": "#ffdad6",
+                        "on-background": "#dee1f7",
+                        "on-surface-variant": "#c7c4d8",
+                        "surface-variant": "#2f3445",
+                        "surface-container": "#1a1f2f",
+                        "on-secondary-container": "#00452e",
+                        "on-tertiary-container": "#372700",
+                        "primary-fixed": "#e3dfff",
+                        "primary": "#c4c0ff",
+                        "on-primary-container": "#1b0091",
+                        "background": "#0A0F1E",
+                        "surface-tint": "#c4c0ff",
+                        "tertiary-container": "#b88900",
+                        "surface-dim": "#0A0F1E",
+                        "on-primary-fixed": "#100069",
+                        "secondary-container": "#00bd85",
+                        "on-secondary-fixed": "#002114",
+                        "surface": "#0A0F1E",
+                        "primary-container": "#8781ff",
+                        "inverse-on-surface": "#2b3040",
+                        "outline-variant": "#464555",
+                        "surface-container-highest": "#2f3445",
+                        "secondary": "#45dfa4",
+                        "on-primary": "#2000a4",
+                        "on-secondary-fixed-variant": "#005137",
+                        "on-tertiary-fixed": "#261a00",
+                        "error-container": "#93000a",
+                        "on-primary-fixed-variant": "#3622ca",
+                        "primary-fixed-dim": "#c4c0ff",
+                        "outline": "#918fa1",
+                        "on-tertiary": "#402d00",
+                        "tertiary-fixed-dim": "#f9bd22",
+                        "tertiary-fixed": "#ffdf9f",
+                        "tertiary": "#f9bd22",
+                        "secondary-fixed": "#68fcbf",
+                        "on-secondary": "#003825",
+                        "surface-container-lowest": "#090e1c",
+                        "inverse-surface": "#dee1f7",
+                        "surface-container-high": "#25293a",
+                        "inverse-primary": "#4f44e2",
+                        "on-surface": "#dee1f7",
+                        "secondary-fixed-dim": "#45dfa4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Noto Serif"],
+                        "body": ["Manrope"],
+                        "label": ["Inter"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary/30 min-h-screen">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-8 w-72 rounded-r-3xl border-r border-white/5 bg-white/5 backdrop-blur-xl z-50">
+<div class="mb-12">
+<h1 class="font-headline text-2xl font-bold text-[#c4c0ff]">The Curator</h1>
+<p class="font-label text-xs uppercase tracking-widest opacity-50 mt-1">Premium Tier</p>
+</div>
+<nav class="flex-1 space-y-4">
+<!-- Dashboard Tab -->
+<a class="flex items-center gap-4 p-3 rounded-xl transition-all hover:bg-white/10 hover:text-white text-[#c7c4d8] font-medium opacity-70" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body">Dashboard</span>
+</a>
+<!-- Clients Tab -->
+<a class="flex items-center gap-4 p-3 rounded-xl transition-all hover:bg-white/10 hover:text-white text-[#c7c4d8] font-medium opacity-70" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body">Clients</span>
+</a>
+<!-- Invoices Tab -->
+<a class="flex items-center gap-4 p-3 rounded-xl transition-all hover:bg-white/10 hover:text-white text-[#c7c4d8] font-medium opacity-70" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-body">Invoices</span>
+</a>
+<!-- Settings Tab (ACTIVE) -->
+<a class="flex items-center gap-4 p-3 rounded-xl transition-all text-[#c4c0ff] font-bold border-r-2 border-[#c4c0ff]" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-body">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-8 border-t border-white/5">
+<button class="flex items-center gap-4 p-3 rounded-xl w-full text-error font-medium transition-all hover:bg-error/10">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body">Logout</span>
+</button>
+</div>
+</aside>
+<!-- TopNavBar Shell -->
+<header class="ml-72 flex justify-between items-center px-14 py-8 bg-transparent">
+<div class="relative w-96">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 opacity-40 text-sm">search</span>
+<input class="w-full bg-white/5 border-none rounded-full py-2.5 pl-11 pr-4 text-sm focus:ring-1 focus:ring-[#c4c0ff]/40 placeholder:opacity-30" placeholder="Search settings..." type="text"/>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative hover:opacity-80 transition-opacity">
+<span class="material-symbols-outlined text-[#c4c0ff]" data-icon="notifications">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-secondary rounded-full"></span>
+</button>
+<div class="flex items-center gap-3">
+<div class="text-right hidden sm:block">
+<p class="text-xs font-label uppercase tracking-tighter opacity-50">Active Session</p>
+<p class="text-sm font-semibold">Alex Rivera</p>
+</div>
+<img alt="User avatar" class="w-10 h-10 rounded-full border border-white/10 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5RBE1lAceFkAtvBB78drw24VFpqbHmWdPPZJwZc30OddJtnzymTfzzfr5MexJakc2GsMqDaYNKD3DpHQy6UtFrUUAdfVdBKVYukWm-Fjf8LaOxo2XU0qEmmWLWFrJkdG6bo96A_lhKnOFja4r9-W5BYSVpND3zuxjpXEwo_8XNBUIw90vYRHT5xQkiT8bZrL516IM6KOLs5eKxkMbmFMHqXwKd0Ck6HiKNqzVASdpsqaQqALP0Dg7RBYLqFqcI7GxBYb-VM8n--o"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-72 px-14 pb-24 max-w-5xl mx-auto">
+<!-- Header -->
+<section class="mb-12">
+<h2 class="font-headline text-5xl font-bold tracking-tight text-on-surface mb-2">Settings</h2>
+<p class="text-on-surface-variant max-w-md opacity-70">Customize your workspace experience and view performance summaries.</p>
+</section>
+<div class="space-y-8">
+<!-- Theme Preference (NEW) -->
+<section class="glass-panel rounded-2xl p-10">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+<div>
+<h3 class="font-headline text-2xl mb-1">Theme Preference</h3>
+<p class="text-on-surface-variant text-sm">Choose your preferred visual atmosphere</p>
+</div>
+<div class="inline-flex p-1 bg-white/5 rounded-xl border border-white/5">
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all text-[#c4c0ff] hover:text-white">
+<span class="material-symbols-outlined text-sm">light_mode</span>
+                            Light
+                        </button>
+<button class="flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all bg-primary/20 text-primary shadow-sm border border-primary/20">
+<span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">dark_mode</span>
+                            Dark
+                        </button>
+</div>
+</div>
+</section>
+<!-- Earnings Overview (Simplified) -->
+<section class="glass-panel rounded-2xl p-10">
+<div class="flex justify-between items-start mb-10">
+<div>
+<h3 class="font-headline text-2xl mb-1">Earnings Overview</h3>
+<p class="text-on-surface-variant text-sm">Monthly performance snapshot</p>
+</div>
+<span class="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-[10px] font-label tracking-widest text-on-surface-variant">AUTO-UPDATED</span>
+</div>
+<div class="h-48 flex items-end gap-3 w-full px-2">
+<div class="flex-1 bg-white/5 rounded-lg h-[40%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-white/5 rounded-lg h-[65%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-white/5 rounded-lg h-[45%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-primary/40 rounded-lg h-[85%] transition-all hover:bg-primary relative group border border-primary/20">
+<div class="absolute -top-12 left-1/2 -translate-x-1/2 bg-surface-container-highest px-3 py-1.5 rounded-lg text-xs font-bold border border-primary/40 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">$12,400</div>
+</div>
+<div class="flex-1 bg-white/5 rounded-lg h-[55%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-white/5 rounded-lg h-[75%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-white/5 rounded-lg h-[60%] transition-all hover:bg-primary/20"></div>
+<div class="flex-1 bg-white/5 rounded-lg h-[90%] transition-all hover:bg-primary/20"></div>
+</div>
+<div class="flex justify-between mt-6 px-2 text-[10px] font-label tracking-[0.2em] opacity-30 uppercase">
+<span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span>
+</div>
+</section>
+</div>
+</main>
+</body></html>

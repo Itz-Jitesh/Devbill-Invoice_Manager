@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Clients | DevBill SaaS</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0e1322; /* Matches surface-dim from config */
+            color: #dee1f7; /* Matches on-surface */
+            font-family: 'Manrope', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .gradient-primary {
+            background: linear-gradient(135deg, #c4c0ff 0%, #8781ff 100%);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "outline": "#918fa1",
+                "surface-dim": "#0e1322",
+                "primary-fixed": "#e3dfff",
+                "on-primary": "#2000a4",
+                "secondary": "#45dfa4",
+                "on-surface-variant": "#c7c4d8",
+                "on-background": "#dee1f7",
+                "surface-variant": "#2f3445",
+                "surface-container": "#1a1f2f",
+                "inverse-primary": "#4f44e2",
+                "primary-fixed-dim": "#c4c0ff",
+                "surface-container-low": "#161b2b",
+                "on-secondary-fixed-variant": "#005137",
+                "inverse-on-surface": "#2b3040",
+                "on-tertiary-fixed": "#261a00",
+                "surface-container-lowest": "#090e1c",
+                "tertiary-container": "#b88900",
+                "tertiary": "#f9bd22",
+                "on-primary-fixed": "#100069",
+                "on-tertiary-fixed-variant": "#5c4300",
+                "surface": "#0e1322",
+                "on-tertiary": "#402d00",
+                "primary": "#c4c0ff",
+                "on-error-container": "#ffdad6",
+                "tertiary-fixed-dim": "#f9bd22",
+                "error-container": "#93000a",
+                "tertiary-fixed": "#ffdf9f",
+                "secondary-container": "#00bd85",
+                "primary-container": "#8781ff",
+                "on-secondary-container": "#00452e",
+                "inverse-surface": "#dee1f7",
+                "secondary-fixed-dim": "#45dfa4",
+                "on-error": "#690005",
+                "surface-container-highest": "#2f3445",
+                "on-tertiary-container": "#372700",
+                "on-primary-fixed-variant": "#3622ca",
+                "surface-bright": "#343949",
+                "outline-variant": "#464555",
+                "on-surface": "#dee1f7",
+                "surface-tint": "#c4c0ff",
+                "on-secondary-fixed": "#002114",
+                "error": "#ffb4ab",
+                "secondary-fixed": "#68fcbf",
+                "on-primary-container": "#1b0091",
+                "background": "#0e1322",
+                "on-secondary": "#003825",
+                "surface-container-high": "#25293a"
+              },
+              fontFamily: {
+                "headline": ["Noto Serif"],
+                "body": ["Manrope"],
+                "label": ["Inter"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+</head>
+<body class="flex min-h-screen">
+<!-- SIDEBAR (Mapped from Shared Components JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col p-6 z-50 h-screen w-72 rounded-r-3xl border-r border-white/10 bg-white/5 backdrop-blur-[20px] shadow-[4px_0_24px_rgba(0,0,0,0.5)]">
+<div class="flex flex-col h-full">
+<div class="mb-12">
+<h1 class="text-indigo-200 font-serif text-xl tracking-tight">Curator Pro</h1>
+<p class="text-on-surface-variant/60 font-label text-[10px] uppercase tracking-[0.2em] mt-1">Enterprise Edition</p>
+</div>
+<nav class="flex-1 space-y-2">
+<!-- Dashboard -->
+<a class="group flex items-center px-4 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-slate-200 hover:bg-white/10" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="dashboard">dashboard</span>
+<span class="font-label font-medium">Dashboard</span>
+</a>
+<!-- Clients (ACTIVE) -->
+<a class="group flex items-center px-4 py-3 rounded-xl transition-all duration-300 bg-indigo-500/20 text-indigo-100 font-bold border-r-2 border-indigo-400 translate-x-1" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="group" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="font-label">Clients</span>
+</a>
+<!-- Invoices -->
+<a class="group flex items-center px-4 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-slate-200 hover:bg-white/10" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="receipt_long">receipt_long</span>
+<span class="font-label font-medium">Invoices</span>
+</a>
+<!-- Settings -->
+<a class="group flex items-center px-4 py-3 rounded-xl transition-all duration-300 text-slate-400 hover:text-slate-200 hover:bg-white/10" href="#">
+<span class="material-symbols-outlined mr-3" data-icon="settings">settings</span>
+<span class="font-label font-medium">Settings</span>
+</a>
+</nav>
+<div class="pt-8 mt-8 border-t border-white/5 space-y-2">
+<button class="w-full gradient-primary text-on-primary font-label font-bold py-3 px-4 rounded-xl shadow-lg shadow-indigo-500/20 transition-transform active:scale-95 mb-6 uppercase tracking-wider text-xs">
+                    New Project
+                </button>
+<a class="group flex items-center px-4 py-2 rounded-lg text-slate-400 hover:text-slate-200 transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="contact_support">contact_support</span>
+<span class="font-label text-sm">Support</span>
+</a>
+<a class="group flex items-center px-4 py-2 rounded-lg text-slate-400 hover:text-error transition-colors" href="#">
+<span class="material-symbols-outlined mr-3 text-sm" data-icon="logout">logout</span>
+<span class="font-label text-sm">Logout</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- MAIN CONTENT -->
+<main class="flex-1 ml-72 px-14 py-16">
+<!-- HEADER SECTION -->
+<header class="flex items-end justify-between mb-20">
+<div>
+<h2 class="font-headline text-5xl font-light text-on-surface tracking-tight">Clients</h2>
+<div class="h-1 w-12 bg-indigo-400/30 mt-6 rounded-full"></div>
+</div>
+<button class="flex items-center gap-2 gradient-primary px-8 py-4 rounded-xl text-on-primary font-label font-bold uppercase tracking-widest text-xs shadow-[0_10px_30px_-10px_rgba(135,129,255,0.5)] hover:scale-105 transition-all">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+                Add Client
+            </button>
+</header>
+<!-- CLIENT GRID -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<!-- CLIENT CARD 1 -->
+<div class="group relative glass-panel rounded-[20px] p-8 transition-all duration-500 hover:bg-white/[0.08] hover:-translate-y-2 overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg text-white glass-panel bg-indigo-500/30 border-indigo-400/20">
+                        LS
+                    </div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="font-body text-xl font-semibold text-white">Lukas Sterling</h3>
+<p class="font-body text-sm text-on-surface-variant/60 mt-1">Nova Horizon Systems</p>
+<div class="flex items-center gap-2 mt-6 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+<span class="font-label text-sm tracking-tight">lukas.s@novahorizon.io</span>
+</div>
+</div>
+<!-- Ambient Glow effect -->
+<div class="absolute -bottom-10 -right-10 w-24 h-24 bg-indigo-500/10 blur-[40px] rounded-full group-hover:bg-indigo-500/20 transition-colors"></div>
+</div>
+<!-- CLIENT CARD 2 -->
+<div class="group relative glass-panel rounded-[20px] p-8 transition-all duration-500 hover:bg-white/[0.08] hover:-translate-y-2 overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg text-white glass-panel bg-emerald-500/30 border-emerald-400/20">
+                        MK
+                    </div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="font-body text-xl font-semibold text-white">Maya Kovic</h3>
+<p class="font-body text-sm text-on-surface-variant/60 mt-1">Stratos Digital</p>
+<div class="flex items-center gap-2 mt-6 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+<span class="font-label text-sm tracking-tight">maya@stratos.design</span>
+</div>
+</div>
+<div class="absolute -bottom-10 -right-10 w-24 h-24 bg-emerald-500/10 blur-[40px] rounded-full group-hover:bg-emerald-500/20 transition-colors"></div>
+</div>
+<!-- CLIENT CARD 3 -->
+<div class="group relative glass-panel rounded-[20px] p-8 transition-all duration-500 hover:bg-white/[0.08] hover:-translate-y-2 overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg text-white glass-panel bg-amber-500/30 border-amber-400/20">
+                        DR
+                    </div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="font-body text-xl font-semibold text-white">David Ross</h3>
+<p class="font-body text-sm text-on-surface-variant/60 mt-1">Apex Venture Capital</p>
+<div class="flex items-center gap-2 mt-6 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+<span class="font-label text-sm tracking-tight">d.ross@apex.vc</span>
+</div>
+</div>
+<div class="absolute -bottom-10 -right-10 w-24 h-24 bg-amber-500/10 blur-[40px] rounded-full group-hover:bg-amber-500/20 transition-colors"></div>
+</div>
+<!-- CLIENT CARD 4 -->
+<div class="group relative glass-panel rounded-[20px] p-8 transition-all duration-500 hover:bg-white/[0.08] hover:-translate-y-2 overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg text-white glass-panel bg-rose-500/30 border-rose-400/20">
+                        EW
+                    </div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="font-body text-xl font-semibold text-white">Elena Wright</h3>
+<p class="font-body text-sm text-on-surface-variant/60 mt-1">Wright Law Group</p>
+<div class="flex items-center gap-2 mt-6 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+<span class="font-label text-sm tracking-tight">elena@wrightlaw.com</span>
+</div>
+</div>
+<div class="absolute -bottom-10 -right-10 w-24 h-24 bg-rose-500/10 blur-[40px] rounded-full group-hover:bg-rose-500/20 transition-colors"></div>
+</div>
+<!-- CLIENT CARD 5 -->
+<div class="group relative glass-panel rounded-[20px] p-8 transition-all duration-500 hover:bg-white/[0.08] hover:-translate-y-2 overflow-hidden">
+<div class="flex items-start justify-between">
+<div class="w-14 h-14 rounded-full flex items-center justify-center font-bold text-lg text-white glass-panel bg-fuchsia-500/30 border-fuchsia-400/20">
+                        JT
+                    </div>
+<div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="edit">edit</span>
+</button>
+<button class="w-10 h-10 rounded-full glass-panel flex items-center justify-center text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="font-body text-xl font-semibold text-white">Julian Thorne</h3>
+<p class="font-body text-sm text-on-surface-variant/60 mt-1">Ethereal Art Collective</p>
+<div class="flex items-center gap-2 mt-6 text-on-surface-variant/40">
+<span class="material-symbols-outlined text-base" data-icon="mail">mail</span>
+<span class="font-label text-sm tracking-tight">julian@ethereal.art</span>
+</div>
+</div>
+<div class="absolute -bottom-10 -right-10 w-24 h-24 bg-fuchsia-500/10 blur-[40px] rounded-full group-hover:bg-fuchsia-500/20 transition-colors"></div>
+</div>
+<!-- EMPTY STATE / ADD NEW DASHED CARD -->
+<button class="group flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-white/10 p-8 hover:border-indigo-400/40 transition-all duration-300 bg-transparent hover:bg-indigo-500/[0.02]">
+<div class="w-12 h-12 rounded-full glass-panel flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-indigo-300" data-icon="add">add</span>
+</div>
+<p class="font-label text-sm font-medium text-on-surface-variant/60 group-hover:text-indigo-200">New Client</p>
+</button>
+</div>
+<!-- INSIGHT RAIL (Signature Component) -->
+<aside class="fixed right-0 top-0 h-screen w-80 py-16 px-10 flex flex-col gap-12 bg-white/5 backdrop-blur-[20px] border-l border-white/5 z-40">
+<div class="space-y-1">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/40">Active Projects</span>
+<p class="font-headline text-5xl font-light text-indigo-100">24</p>
+</div>
+<div class="space-y-1">
+<span class="font-label text-[10px] uppercase tracking-widest text-on-surface-variant/40">Pending Invoices</span>
+<p class="font-headline text-5xl font-light text-amber-200">08</p>
+</div>
+<div class="mt-auto">
+<div class="rounded-2xl glass-panel p-6 overflow-hidden relative">
+<img class="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity" data-alt="abstract financial data visualization with soft glowing blue and purple lines on a dark background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLjbkAqJX_0kfG50p7CtcVoR-n_KkrApMU3-ZzTHYJd1IXnwxryxXs1a4MSnD_oegX12VrdgSVO9c9WVtCf8tv_F9eKpDtMaTYYAYFbHxh2Q9TFYKUJL75R3HjLy7otmLNNAtSriIsOnRIf_QeYwkWOVn_YQ0BYPqjEm-CD6lZUyKw6APU5b0A9-StPUNJHe2N9cskNObEHynnz8vFh1qGUiZb8aMN9UUs5fh8JBtcHu9BvGDzYp9l_SbzuzVR6Ju9EqXjvchsuHU"/>
+<div class="relative z-10">
+<p class="font-body text-xs text-on-surface-variant leading-relaxed">Client retention has increased by <span class="text-secondary font-bold">12%</span> this quarter.</p>
+<a class="inline-block mt-4 text-[10px] uppercase tracking-widest font-bold text-primary hover:text-white transition-colors" href="#">View Analytics →</a>
+</div>
+</div>
+</div>
+</aside>
+</main>
+<!-- FOOTER SEARCH (TopAppBar Floating Context) -->
+<div class="fixed bottom-10 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-50">
+<div class="glass-panel rounded-2xl flex items-center p-2 shadow-2xl">
+<span class="material-symbols-outlined ml-4 text-on-surface-variant/60" data-icon="search">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-sm font-body w-full placeholder:text-on-surface-variant/30 text-white" placeholder="Quick search clients..." type="text"/>
+<kbd class="hidden md:flex items-center gap-1 glass-panel px-2 py-1 rounded-lg text-[10px] font-label text-on-surface-variant/40 mr-2">
+<span class="text-[14px]">⌘</span>K
+            </kbd>
+</div>
+</div>
+</body></html>

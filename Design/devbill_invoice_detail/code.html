@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Invoice Details - DevBill</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;700&amp;family=Manrope:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-tertiary-fixed": "#261a00",
+            "tertiary-fixed-dim": "#f9bd22",
+            "primary": "#c4c0ff",
+            "outline": "#918fa1",
+            "error-container": "#93000a",
+            "surface-bright": "#343949",
+            "on-secondary-container": "#00452e",
+            "on-background": "#dee1f7",
+            "on-secondary-fixed": "#002114",
+            "error": "#ffb4ab",
+            "surface-variant": "#2f3445",
+            "surface-dim": "#0e1322",
+            "secondary": "#45dfa4",
+            "surface-container-high": "#25293a",
+            "primary-fixed": "#e3dfff",
+            "on-tertiary-container": "#372700",
+            "tertiary-fixed": "#ffdf9f",
+            "secondary-container": "#00bd85",
+            "on-secondary-fixed-variant": "#005137",
+            "on-tertiary": "#402d00",
+            "inverse-primary": "#4f44e2",
+            "surface": "#0e1322",
+            "on-primary-fixed": "#100069",
+            "on-error-container": "#ffdad6",
+            "secondary-fixed": "#68fcbf",
+            "inverse-on-surface": "#2b3040",
+            "on-secondary": "#003825",
+            "tertiary-container": "#b88900",
+            "tertiary": "#f9bd22",
+            "surface-container-lowest": "#090e1c",
+            "surface-container": "#1a1f2f",
+            "surface-container-low": "#161b2b",
+            "on-tertiary-fixed-variant": "#5c4300",
+            "background": "#0e1322",
+            "primary-container": "#8781ff",
+            "on-surface-variant": "#c7c4d8",
+            "on-primary-fixed-variant": "#3622ca",
+            "primary-fixed-dim": "#c4c0ff",
+            "outline-variant": "#464555",
+            "inverse-surface": "#dee1f7",
+            "on-primary-container": "#1b0091",
+            "surface-tint": "#c4c0ff",
+            "on-primary": "#2000a4",
+            "on-surface": "#dee1f7",
+            "on-error": "#690005",
+            "surface-container-highest": "#2f3445",
+            "secondary-fixed-dim": "#45dfa4"
+          },
+          fontFamily: {
+            "headline": ["Noto Serif"],
+            "body": ["Manrope"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #0e1322;
+      color: #dee1f7;
+      font-family: 'Manrope', sans-serif;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-72 flex flex-col py-8 bg-[#161b2b] relative after:content-[''] after:absolute after:right-0 after:top-0 after:h-full after:w-[1px] after:bg-white/10 z-50">
+<div class="px-8 mb-10">
+<h1 class="text-2xl font-bold tracking-tight text-white font-[Noto_Serif]">DevBill</h1>
+<p class="text-xs text-on-surface-variant font-label tracking-widest mt-1">Premium Billing</p>
+</div>
+<nav class="flex-grow">
+<a class="flex items-center gap-4 px-6 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body font-medium">Clients</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#c4c0ff] bg-white/5 border-r-4 border-[#c4c0ff] translate-x-1 duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-body font-bold">Invoices</span>
+</a>
+<a class="flex items-center gap-4 px-6 py-4 text-[#c7c4d8] hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body font-medium">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary-container py-4 rounded-xl font-label font-bold uppercase tracking-wider text-sm transition-transform active:scale-95">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+        Create New
+      </button>
+</div>
+</aside>
+<!-- Content Wrapper -->
+<div class="flex-1 flex flex-col ml-72">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-40 bg-transparent backdrop-blur-xl flex justify-between items-center w-full px-10 py-4 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)]">
+<div class="flex items-center gap-6">
+<h2 class="text-2xl font-bold font-headline text-[#c4c0ff]">#INV-0042</h2>
+<span class="bg-primary/20 text-primary px-4 py-1 rounded-full text-xs font-label font-semibold border border-primary/30">Sent</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="edit">edit</span>
+<span class="font-body text-sm font-medium">Edit</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="link">link</span>
+<span class="font-body text-sm font-medium">Share Link</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white transition-colors duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="download">download</span>
+<span class="font-body text-sm font-medium">Download PDF</span>
+</button>
+<div class="h-6 w-[1px] bg-white/10 mx-2"></div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-on-surface-variant hover:text-white cursor-pointer" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant hover:text-white cursor-pointer" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="p-14 space-y-12 max-w-6xl mx-auto w-full">
+<!-- Primary Invoice Card -->
+<section class="glass-card rounded-[20px] p-12 relative overflow-hidden">
+<!-- Brand Accent Glow -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+<!-- Header Info -->
+<div class="flex justify-between items-start mb-16 relative z-10">
+<div>
+<p class="text-xs uppercase tracking-[0.2em] text-on-surface-variant font-label mb-4">Bill To</p>
+<h3 class="text-2xl font-bold font-headline text-white mb-2">Acme Architecture Studio</h3>
+<p class="text-on-surface-variant font-body">billing@acmestudio.design</p>
+<p class="text-on-surface-variant font-body mt-2 leading-relaxed">
+              1200 Pacific Ave, Suite 300<br/>
+              San Francisco, CA 94109
+            </p>
+</div>
+<div class="text-right">
+<p class="text-xs uppercase tracking-[0.2em] text-on-surface-variant font-label mb-4">Invoice Details</p>
+<div class="space-y-2">
+<div class="flex justify-end gap-6">
+<span class="text-on-surface-variant font-body">Invoice Number</span>
+<span class="text-white font-body font-bold">#INV-0042</span>
+</div>
+<div class="flex justify-end gap-6">
+<span class="text-on-surface-variant font-body">Issue Date</span>
+<span class="text-white font-body font-bold">Oct 24, 2023</span>
+</div>
+<div class="flex justify-end gap-6">
+<span class="text-on-surface-variant font-body">Due Date</span>
+<span class="text-white font-body font-bold">Nov 07, 2023</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Line Items Table -->
+<div class="relative z-10 mb-16">
+<div class="grid grid-cols-12 pb-4 mb-4 border-b border-white/5">
+<div class="col-span-6 text-xs uppercase tracking-widest text-on-surface-variant font-label">Description</div>
+<div class="col-span-2 text-center text-xs uppercase tracking-widest text-on-surface-variant font-label">Qty</div>
+<div class="col-span-2 text-right text-xs uppercase tracking-widest text-on-surface-variant font-label">Rate</div>
+<div class="col-span-2 text-right text-xs uppercase tracking-widest text-on-surface-variant font-label">Amount</div>
+</div>
+<div class="space-y-4">
+<!-- Row 1 -->
+<div class="grid grid-cols-12 items-center p-4 rounded-xl hover:bg-white/5 transition-colors group">
+<div class="col-span-6">
+<h4 class="text-white font-body font-semibold">Web Infrastructure Design</h4>
+<p class="text-sm text-on-surface-variant mt-1">Architecture and cloud deployment planning</p>
+</div>
+<div class="col-span-2 text-center text-white font-body">1</div>
+<div class="col-span-2 text-right text-white font-body">$4,500.00</div>
+<div class="col-span-2 text-right text-white font-body font-bold">$4,500.00</div>
+</div>
+<!-- Row 2 -->
+<div class="grid grid-cols-12 items-center p-4 rounded-xl hover:bg-white/5 transition-colors group">
+<div class="col-span-6">
+<h4 class="text-white font-body font-semibold">Custom API Integration</h4>
+<p class="text-sm text-on-surface-variant mt-1">Third-party payment gateway and CRM bridge</p>
+</div>
+<div class="col-span-2 text-center text-white font-body">24</div>
+<div class="col-span-2 text-right text-white font-body">$180.00</div>
+<div class="col-span-2 text-right text-white font-body font-bold">$4,320.00</div>
+</div>
+<!-- Row 3 -->
+<div class="grid grid-cols-12 items-center p-4 rounded-xl hover:bg-white/5 transition-colors group">
+<div class="col-span-6">
+<h4 class="text-white font-body font-semibold">Frontend Visual Audit</h4>
+<p class="text-sm text-on-surface-variant mt-1">Accessibility and performance optimization report</p>
+</div>
+<div class="col-span-2 text-center text-white font-body">1</div>
+<div class="col-span-2 text-right text-white font-body">$1,200.00</div>
+<div class="col-span-2 text-right text-white font-body font-bold">$1,200.00</div>
+</div>
+</div>
+</div>
+<!-- Footer / Totals -->
+<div class="flex justify-end relative z-10 pt-8 border-t border-white/5">
+<div class="w-64 space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-body">Subtotal</span>
+<span class="text-white font-body font-semibold">$10,020.00</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-on-surface-variant font-body">Tax (8%)</span>
+<span class="text-white font-body font-semibold">$801.60</span>
+</div>
+<div class="flex justify-between items-center pt-4 border-t border-white/10">
+<span class="text-white font-headline text-lg">Total</span>
+<span class="text-white font-headline text-3xl font-bold">$10,821.60</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Status History Timeline -->
+<section class="max-w-3xl">
+<h4 class="text-sm uppercase tracking-[0.3em] text-on-surface-variant font-label mb-8">Status History</h4>
+<div class="flex items-center gap-12 glass-card p-8 rounded-2xl">
+<!-- Draft -->
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary-container shadow-[0_0_15px_rgba(196,192,255,0.4)]">
+<span class="material-symbols-outlined text-lg" data-icon="check">check</span>
+</div>
+</div>
+<div>
+<p class="text-white font-bold text-sm font-body">Draft</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">Oct 20, 09:42 AM</p>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-[1px] flex-1 bg-white/10"></div>
+<!-- Sent -->
+<div class="flex items-center gap-4">
+<div class="relative">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary-container shadow-[0_0_15px_rgba(196,192,255,0.4)]">
+<span class="material-symbols-outlined text-lg" data-icon="mail">mail</span>
+</div>
+</div>
+<div>
+<p class="text-white font-bold text-sm font-body">Sent</p>
+<p class="text-[10px] text-on-surface-variant font-label uppercase">Oct 24, 02:15 PM</p>
+</div>
+</div>
+<!-- Divider -->
+<div class="h-[1px] flex-1 bg-white/5"></div>
+<!-- Paid -->
+<div class="flex items-center gap-4 opacity-40">
+<div class="w-10 h-10 rounded-full border-2 border-white/20 flex items-center justify-center text-white/40">
+<span class="material-symbols-outlined text-lg" data-icon="payments">payments</span>
+</div>
+<div>
+<p class="text-white/40 font-bold text-sm font-body">Paid</p>
+<p class="text-[10px] text-white/20 font-label uppercase">Awaiting Payment</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Insight Rail (Signature System Component) -->
+<aside class="fixed right-0 top-32 bottom-32 w-20 glass-card rounded-l-3xl flex flex-col items-center py-10 gap-10">
+<div class="group cursor-help relative">
+<span class="material-symbols-outlined text-primary" data-icon="insights">insights</span>
+<div class="absolute right-full mr-4 top-0 bg-surface-container-highest p-4 rounded-xl w-48 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl border border-white/10">
+<p class="text-xs font-label text-on-surface-variant uppercase tracking-wider mb-2">Invoice Health</p>
+<p class="text-sm font-body text-white">This client usually pays within 4 days of receipt.</p>
+</div>
+</div>
+<div class="group cursor-help relative">
+<span class="material-symbols-outlined text-secondary" data-icon="history">history</span>
+</div>
+<div class="group cursor-help relative mt-auto">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="help">help</span>
+</div>
+</aside>
+</div>
+</body></html>
