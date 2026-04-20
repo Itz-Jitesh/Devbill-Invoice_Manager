@@ -1,14 +1,10 @@
-import connectDB from '@/lib/db';
-import User from '@/models/user.model';
-import bcrypt from 'bcryptjs';
 import { NextResponse } from 'next/server';
+import supabase from '@/lib/supabase';
 
 /**
  * @desc    Register a new user
  * @route   POST /api/auth/signup
  * @access  Public
- *
- * Replaces: Express route POST /api/auth/signup via auth.controller.js
  */
 export async function POST(request) {
   try {
@@ -28,33 +24,47 @@ export async function POST(request) {
     // 2. Normalize data
     const normalizedEmail = email.toLowerCase();
 
-    // 3. Connect and check for existing user
-    await connectDB();
-    const userExists = await User.findOne({ email: normalizedEmail });
-    if (userExists) {
-      return NextResponse.json({ message: 'User already exists' }, { status: 400 });
-    }
-
-    // 4. Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // 5. Create and save new user
-    const user = await User.create({
-      username,
+    // 3. Supabase Auth Signup
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: normalizedEmail,
-      password: hashedPassword,
+      password: password,
+      options: {
+        data: {
+          username: username
+        }
+      }
     });
 
-    // 6. Return success (no token on signup — user must login)
+    if (authError) {
+      return NextResponse.json({ message: authError.message }, { status: 400 });
+    }
+
+    if (!authData.user) {
+      return NextResponse.json({ message: 'User already exists or signup failed' }, { status: 400 });
+    }
+
+    // 4. Insert into custom users table
+    const { error: insertError } = await supabase.from('users').insert([{
+      id: authData.user.id,
+      username: username,
+      email: normalizedEmail
+    }]);
+
+    if (insertError) {
+      // If error (e.g. duplicate key), we can handle it
+      console.error('Error inserting into users table:', insertError.message);
+      // Not failing the request since auth user was created, but ideally we'd use a postgres trigger.
+    }
+
+    // 5. Return success (no token on signup — user must login)
     return NextResponse.json(
       {
         message: 'User created',
         user: {
-          id: user._id,
-          name: user.username,
-          username: user.username,
-          email: user.email,
+          id: authData.user.id,
+          name: username,
+          username: username,
+          email: normalizedEmail,
         },
       },
       { status: 201 }

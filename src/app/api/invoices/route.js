@@ -1,9 +1,5 @@
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
-import connectDB from '@/lib/db';
-import Invoice from '@/models/Invoice';
-import Client from '@/models/Client';
-import InvoiceCounter from '@/models/InvoiceCounter';
+import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
 
 /**
@@ -17,14 +13,26 @@ export async function GET(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    await connectDB();
-    const invoices = await Invoice.find({ 
-      userId: auth.user._id,
-      status: { $ne: 'cancelled' } // 🛡️ Hide cancelled invoices in global list
-    })
-      .populate('clientId', 'name email company')
-      .sort({ date: -1 });
-    return NextResponse.json(invoices);
+    const { data: invoices, error } = await supabase
+      .from('invoices')
+      .select('*, clientId:clients(name, email, company)')
+      .eq('user_id', auth.user._id)
+      .neq('status', 'cancelled')
+      .order('date', { ascending: false });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Normalize for frontend
+    const normalizedInvoices = invoices.map(inv => ({
+      ...inv,
+      _id: inv.id,
+      userId: inv.user_id,
+      clientId: inv.clientId ? { ...inv.clientId, _id: inv.client_id } : null
+    }));
+
+    return NextResponse.json(normalizedInvoices);
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to fetch invoices: ' + error.message },
@@ -44,7 +52,6 @@ export async function POST(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    await connectDB();
     const body = await request.json();
     
     // 1. Validate required fields
@@ -56,11 +63,14 @@ export async function POST(request) {
     }
 
     // 2. Ownership Check: Verify client belongs to this user
-    const clientId = new mongoose.Types.ObjectId(body.clientId);
-    const userId = new mongoose.Types.ObjectId(auth.user._id);
+    const { data: client, error: clientError } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('id', body.clientId)
+      .eq('user_id', auth.user._id)
+      .single();
 
-    const client = await Client.findOne({ _id: clientId, userId: userId });
-    if (!client) {
+    if (clientError || !client) {
       return NextResponse.json(
         { error: 'Client not found or access denied' },
         { status: 404 }
@@ -70,12 +80,13 @@ export async function POST(request) {
     // 3. Atomic counter for sequential invoice number
     let invoiceNumber = body.invoiceNumber;
     if (!invoiceNumber) {
-      const counter = await InvoiceCounter.findOneAndUpdate(
-        { userId: auth.user._id },
-        { $inc: { nextNumber: 1 } },
-        { upsert: true, new: true }
-      );
-      invoiceNumber = counter.nextNumber;
+      const { data: nextNum, error: rpcError } = await supabase
+        .rpc('increment_invoice_number', { target_user_id: auth.user._id });
+
+      if (rpcError) {
+        throw new Error('Failed to generate invoice number: ' + rpcError.message);
+      }
+      invoiceNumber = nextNum;
     }
 
     // 4. Server-side totals calculation (if items present)
@@ -85,25 +96,44 @@ export async function POST(request) {
     }
 
     // 5. Create invoice
-    const invoice = await Invoice.create({
-      ...body,
-      amount,
-      invoiceNumber,
-      userId: auth.user._id
-    });
-    
-    const populatedInvoice = await invoice.populate('clientId', 'name email company');
-    
-    return NextResponse.json(populatedInvoice, { status: 201 });
-  } catch (error) {
-    // Handle duplicate key error for invoiceNumber
-    if (error.code === 11000) {
-      return NextResponse.json(
-        { error: 'Invoice number already exists for this user' },
-        { status: 400 }
-      );
+    const invoiceData = {
+      title: body.title,
+      amount: amount,
+      status: body.status || 'pending',
+      client_id: body.clientId,
+      date: body.date || new column(),
+      due_date: body.dueDate,
+      invoice_number: invoiceNumber,
+      user_id: auth.user._id
+    };
+
+    const { data: invoice, error: insertError } = await supabase
+      .from('invoices')
+      .insert([invoiceData])
+      .select('*, clientId:clients(name, email, company)')
+      .single();
+
+    if (insertError) {
+      // Handle unique constraint violation
+      if (insertError.code === '23505') {
+        return NextResponse.json(
+          { error: 'Invoice number already exists for this user' },
+          { status: 400 }
+        );
+      }
+      throw new Error(insertError.message);
     }
 
+    // Normalize for frontend
+    const normalizedInvoice = {
+      ...invoice,
+      _id: invoice.id,
+      userId: invoice.user_id,
+      clientId: { ...invoice.clientId, _id: invoice.client_id }
+    };
+
+    return NextResponse.json(normalizedInvoice, { status: 201 });
+  } catch (error) {
     return NextResponse.json(
       { error: 'Failed to create invoice: ' + error.message },
       { status: 500 }

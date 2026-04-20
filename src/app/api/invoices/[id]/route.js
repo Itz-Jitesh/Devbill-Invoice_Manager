@@ -1,15 +1,6 @@
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
-import connectDB from '@/lib/db';
-import Invoice from '@/models/Invoice';
+import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
-
-const validateInvoiceId = (id) => {
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return NextResponse.json({ error: 'Invalid invoice id' }, { status: 400 });
-  }
-  return null;
-};
 
 /**
  * GET /api/invoices/[id]
@@ -23,19 +14,26 @@ export async function GET(request, { params }) {
     }
 
     const { id } = await params;
-    const invalidIdResponse = validateInvoiceId(id);
-    if (invalidIdResponse) return invalidIdResponse;
     
-    await connectDB();
+    const { data: invoice, error } = await supabase
+      .from('invoices')
+      .select('*, clientId:clients(name, email, company)')
+      .eq('id', id)
+      .eq('user_id', auth.user._id)
+      .single();
 
-    const invoice = await Invoice.findOne({ _id: id, userId: auth.user._id })
-      .populate('clientId', 'name email company');
-
-    if (!invoice) {
+    if (error || !invoice) {
       return NextResponse.json({ error: 'Invoice not found or access denied' }, { status: 404 });
     }
 
-    return NextResponse.json(invoice);
+    const normalizedInvoice = {
+      ...invoice,
+      _id: invoice.id,
+      userId: invoice.user_id,
+      clientId: { ...invoice.clientId, _id: invoice.client_id }
+    };
+
+    return NextResponse.json(normalizedInvoice);
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to fetch invoice: ' + error.message },
@@ -56,23 +54,28 @@ export async function PUT(request, { params }) {
     }
 
     const { id } = await params;
-    const invalidIdResponse = validateInvoiceId(id);
-    if (invalidIdResponse) return invalidIdResponse;
-    
-    await connectDB();
     const body = await request.json();
 
-    const updatedInvoice = await Invoice.findOneAndUpdate(
-      { _id: id, userId: auth.user._id },
-      { $set: body },
-      { new: true, runValidators: true }
-    ).populate('clientId', 'name email company');
+    const { data: updatedInvoice, error } = await supabase
+      .from('invoices')
+      .update(body)
+      .eq('id', id)
+      .eq('user_id', auth.user._id)
+      .select('*, clientId:clients(name, email, company)')
+      .single();
 
-    if (!updatedInvoice) {
+    if (error || !updatedInvoice) {
       return NextResponse.json({ error: 'Invoice not found or access denied' }, { status: 404 });
     }
 
-    return NextResponse.json(updatedInvoice);
+    const normalizedInvoice = {
+      ...updatedInvoice,
+      _id: updatedInvoice.id,
+      userId: updatedInvoice.user_id,
+      clientId: { ...updatedInvoice.clientId, _id: updatedInvoice.client_id }
+    };
+
+    return NextResponse.json(normalizedInvoice);
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to update invoice: ' + error.message },
@@ -83,7 +86,7 @@ export async function PUT(request, { params }) {
 
 /**
  * DELETE /api/invoices/[id]
- * Delete an invoice.
+ * Soft delete an invoice.
  */
 export async function DELETE(request, { params }) {
   try {
@@ -93,18 +96,17 @@ export async function DELETE(request, { params }) {
     }
 
     const { id } = await params;
-    const invalidIdResponse = validateInvoiceId(id);
-    if (invalidIdResponse) return invalidIdResponse;
-    
-    await connectDB();
 
-    const deletedInvoice = await Invoice.findOneAndUpdate(
-      { _id: id, userId: auth.user._id, status: { $ne: 'cancelled' } },
-      { $set: { status: 'cancelled' } },
-      { new: true }
-    );
+    const { data: deletedInvoice, error } = await supabase
+      .from('invoices')
+      .update({ status: 'cancelled' })
+      .eq('id', id)
+      .eq('user_id', auth.user._id)
+      .neq('status', 'cancelled')
+      .select()
+      .single();
 
-    if (!deletedInvoice) {
+    if (error || !deletedInvoice) {
       return NextResponse.json({ error: 'Invoice not found or already cancelled' }, { status: 404 });
     }
 

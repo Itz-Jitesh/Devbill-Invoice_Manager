@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/db';
-import Client from '@/models/Client';
+import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
 
 /**
@@ -14,12 +13,25 @@ export async function GET(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    await connectDB();
-    const clients = await Client.find({ 
-      userId: auth.user._id,
-      isActive: true // 🛡️ Hide soft-deleted clients
-    }).sort({ createdAt: -1 });
-    return NextResponse.json(clients);
+    const { data: clients, error } = await supabase
+      .from('clients')
+      .select('*')
+      .eq('user_id', auth.user._id)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Map `id` to `_id` and `user_id` to `userId` for frontend compatibility if needed
+    const normalizedClients = clients.map(client => ({
+      ...client,
+      _id: client.id,
+      userId: client.user_id
+    }));
+
+    return NextResponse.json(normalizedClients);
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to fetch clients: ' + error.message },
@@ -39,7 +51,6 @@ export async function POST(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    await connectDB();
     const body = await request.json();
     
     if (!body.name) {
@@ -49,13 +60,33 @@ export async function POST(request) {
       );
     }
 
-    // Attach userId to the new client
-    const client = await Client.create({
-      ...body,
-      userId: auth.user._id
-    });
+    // Prepare client data for Supabase
+    const clientData = {
+      name: body.name,
+      email: body.email,
+      company: body.company,
+      user_id: auth.user._id,
+      is_active: true
+    };
 
-    return NextResponse.json(client, { status: 201 });
+    const { data: client, error } = await supabase
+      .from('clients')
+      .insert([clientData])
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Normalize for frontend
+    const normalizedClient = {
+      ...client,
+      _id: client.id,
+      userId: client.user_id
+    };
+
+    return NextResponse.json(normalizedClient, { status: 201 });
   } catch (error) {
     return NextResponse.json(
       { error: 'Failed to create client: ' + error.message },

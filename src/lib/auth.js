@@ -1,29 +1,28 @@
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
-import connectDB from './db';
-import User from '@/models/user.model';
+import supabase from './supabase';
 
 /**
- * Verify JWT from Cookie or Authorization header.
- *
- * Usage inside a route handler:
- *   const auth = await verifyAuth(request)
- *   if (auth.error) return Response.json({ message: auth.error }, { status: auth.status })
- *   const user = auth.user
+ * Verify authentication using Supabase.
  *
  * @param {Request} request - The incoming Web Request object
  * @returns {{ user: object } | { error: string, status: number }}
  */
 export async function verifyAuth(request) {
-  // 1. Try to get token from Secure Cookie (Preferred)
-  const cookieStore = await cookies();
-  let token = cookieStore.get('devbill_token')?.value;
+  // 1. Get session/user from Supabase
+  // The backend can use headers or cookies. 
+  // Since we set 'devbill_token' in cookies, we could use that, 
+  // but supabase.auth.getUser() is the standard way if the client is configured.
+  
+  const authHeader = request.headers.get('authorization');
+  let token = null;
 
-  // 2. Fallback to Authorization Header
-  if (!token) {
-    const authHeader = request.headers.get('authorization');
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      token = authHeader.split(' ')[1];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    token = authHeader.split(' ')[1];
+  } else {
+    // Check cookies as fallback (handled by Next.js headers)
+    const cookie = request.headers.get('cookie');
+    if (cookie) {
+      const match = cookie.match(/devbill_token=([^;]+)/);
+      if (match) token = match[1];
     }
   }
 
@@ -32,20 +31,23 @@ export async function verifyAuth(request) {
   }
 
   try {
-    // 2. Verify and decode JWT
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // 2. Use Supabase to verify the token and get the user
+    const { data: { user }, error } = await supabase.auth.getUser(token);
 
-    // 3. Hydrate user from DB (excluding password)
-    await connectDB();
-    const user = await User.findById(decoded.userId).select('-password');
-
-    if (!user) {
-      return { error: 'User not found', status: 401 };
+    if (error || !user) {
+      return { error: 'Token is invalid or has expired', status: 401 };
     }
 
-    return { user };
+    // Hydrate local user ID (normalized to match MongoDB style if needed, 
+    // but here we just map id to _id for frontend compatibility if necessary)
+    return { 
+      user: {
+        ...user,
+        _id: user.id // Maintain compatibility with frontend expecting _id
+      } 
+    };
   } catch (error) {
     console.error('Auth verification error:', error.message);
-    return { error: 'Token is invalid or has expired', status: 401 };
+    return { error: 'Internal server error during auth', status: 500 };
   }
 }

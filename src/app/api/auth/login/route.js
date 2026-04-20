@@ -1,15 +1,10 @@
-import connectDB from '@/lib/db';
-import User from '@/models/user.model';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { NextResponse } from 'next/server';
+import supabase from '@/lib/supabase';
 
 /**
  * @desc    Authenticate user & get token
  * @route   POST /api/auth/login
  * @access  Public
- *
- * Replaces: Express route POST /api/auth/login via auth.controller.js
  */
 export async function POST(request) {
   try {
@@ -26,38 +21,42 @@ export async function POST(request) {
     // 2. Normalize email
     const normalizedEmail = email.toLowerCase();
 
-    // 3. Find user in MongoDB
-    await connectDB();
-    const user = await User.findOne({ email: normalizedEmail });
-    if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 401 });
-    }
+    // 3. Authenticate with Supabase
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password: password,
+    });
 
-    // 4. Verify password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    if (authError || !authData.user) {
       return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
     }
 
-    if (!process.env.JWT_SECRET) {
-      return NextResponse.json({ message: 'JWT_SECRET is not configured' }, { status: 500 });
+    // Fetch user details from custom table (if needed for username)
+    // Supabase auth.users raw_user_meta_data can also hold username
+    let username = authData.user.user_metadata?.username;
+    
+    // Attempt to pull from public.users table just in case
+    const { data: userRecord } = await supabase
+      .from('users')
+      .select('username')
+      .eq('id', authData.user.id)
+      .single();
+      
+    if (userRecord && userRecord.username) {
+      username = userRecord.username;
     }
 
-    const token = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
+    const token = authData.session.access_token;
 
-    // 6. Set Secure HTTP-Only Cookie
+    // Set Secure HTTP-Only Cookie
     const response = NextResponse.json(
       {
-        token, // Still returning token for backward compatibility if needed
+        token, // Supabase JWT access token
         user: {
-          id: user._id,
-          name: user.username,
-          username: user.username,
-          email: user.email,
+          id: authData.user.id,
+          name: username || authData.user.email,
+          username: username || authData.user.email,
+          email: authData.user.email,
         },
       },
       { status: 200 }
