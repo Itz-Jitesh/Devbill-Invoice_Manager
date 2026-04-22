@@ -63,11 +63,14 @@ export default function InvoiceDetailPage() {
 
   const handleSaveEdit = async (e) => {
     e.preventDefault();
-    const { success, error: updateError } = await updateInvoice(invoice._id || id, {
+    if (!invoice) return;
+    
+    const { success, error: updateError } = await updateInvoice(invoice?._id || id, {
       title: editForm.title,
       amount: Number(editForm.amount),
       status: editForm.status,
     });
+
 
     if (success) {
       setIsEditModalOpen(false);
@@ -113,10 +116,13 @@ export default function InvoiceDetailPage() {
     <div className="relative min-h-screen pb-24">
       {/* Sticky Header */}
       <InvoiceDetailHeader
-        invoiceNumber={invoice.invoiceNumber || invoice._id}
-        status={invoice.status?.toLowerCase() === 'pending' ? 'Sent' : invoice.status}
+        invoiceNumber={invoice?.invoiceNumber || invoice?._id}
+        status={invoice?.status?.toLowerCase() === 'pending' ? 'Sent' : invoice?.status}
         onEdit={handleEdit}
+        invoiceData={invoice}
       />
+
+
 
       {/* Content Layout - Full width, no sidebar */}
       <main className="px-8 pt-8 space-y-16 max-w-6xl mx-auto w-full">

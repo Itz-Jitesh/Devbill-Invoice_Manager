@@ -190,12 +190,13 @@ export default function PublicInvoiceView() {
             )}
           </div>
 
-          {/* Footer */}
-          <div className="bg-surface-container-low/30 p-6 text-center border-t border-white/5">
-            <p className="text-on-surface-variant/40 font-body text-xs">
-              Powered by DevBill • Secure Invoice Sharing
+          <div className="bg-surface-container-low/30 p-8 text-center border-t border-white/5">
+            <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.2em] font-bold leading-relaxed">
+              Powered by DevBill • Professional Invoice Sharing<br/>
+              Support: itsjitesh.work@gmail.com
             </p>
           </div>
+
         </div>
 
         {/* Security Notice */}
