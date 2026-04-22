@@ -11,7 +11,6 @@ import Icon from '@/components/ui/Icon';
  */
 export default function SettingsPage() {
   const { user } = useAuth();
-  const [theme, setTheme] = useState('dark');
   const displayName = user?.name || user?.username || '';
 
   // Mock earnings data for visualization
@@ -39,43 +38,6 @@ export default function SettingsPage() {
       </section>
 
       <div className="space-y-10 max-w-5xl">
-        {/* Theme Preference Section */}
-        <section className="glass-panel rounded-2xl p-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div>
-              <h3 className="font-headline text-2xl mb-2 text-on-surface">Theme Preference</h3>
-              <p className="text-on-surface-variant text-sm font-body">
-                Choose your preferred visual atmosphere
-              </p>
-            </div>
-            <div className="inline-flex p-1.5 bg-white/5 rounded-xl border border-white/5">
-              <button
-                type="button"
-                onClick={() => setTheme('light')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                  theme === 'light'
-                    ? 'bg-primary/20 text-primary shadow-sm border border-primary/20'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                <Icon name="light_mode" size="sm" />
-                Light
-              </button>
-              <button
-                type="button"
-                onClick={() => setTheme('dark')}
-                className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300 ${
-                  theme === 'dark'
-                    ? 'bg-primary/20 text-primary shadow-sm border border-primary/20'
-                    : 'text-on-surface-variant hover:text-on-surface'
-                }`}
-              >
-                <Icon name="dark_mode" size="sm" className="fill-current" />
-                Dark
-              </button>
-            </div>
-          </div>
-        </section>
 
         {/* Account Information Section */}
         <section className="glass-panel rounded-2xl p-10">

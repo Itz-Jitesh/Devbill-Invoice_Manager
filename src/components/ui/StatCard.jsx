@@ -14,17 +14,17 @@ const StatCard = ({
   bgColor = 'bg-[#34D399]/10',
 }) => {
   return (
-    <div className="glass-card p-8 rounded-xl shadow-[0_24px_48px_-12px_rgba(108,99,255,0.04)] hover:shadow-primary/5 transition-all duration-300">
+    <div className="glass-card p-8 rounded-2xl floating-anim group cursor-pointer">
       <div className="flex justify-between items-start mb-6">
-        <span className="text-on-surface-variant font-medium text-sm">{title}</span>
+        <span className="text-on-surface-variant font-semibold text-xs uppercase tracking-widest opacity-60">{title}</span>
         {trendValue && (
-          <span className={`flex items-center ${trendColor} text-xs font-bold ${bgColor} px-2 py-1 rounded-full`}>
-            <Icon name={icon} size="sm" className="mr-1" />
+          <span className={`flex items-center ${trendColor} text-[10px] font-bold ${bgColor} px-3 py-1 rounded-full border border-white/5`}>
+            <Icon name={icon} size="sm" className="mr-1 group-hover:animate-bounce" />
             {trendValue}
           </span>
         )}
       </div>
-      <div className="text-3xl font-headline font-light text-on-surface">{value}</div>
+      <div className="text-4xl font-headline font-light text-on-surface group-hover:text-primary transition-colors">{value}</div>
     </div>
   );
 };

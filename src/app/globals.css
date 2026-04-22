@@ -67,82 +67,127 @@
 
 @layer components {
   .glass-card {
-    background: rgba(255, 255, 255, 0.06);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px) perspective(1000px) rotateX(2deg);
+    box-shadow: 0 15px 45px 0 rgba(0, 0, 0, 0.45);
   }
 
   .glass-card-alt {
-    background: rgba(47, 52, 69, 0.06);
-    backdrop-filter: blur(20px);
+    background: rgba(47, 52, 69, 0.1);
+    backdrop-filter: blur(24px);
     border: 1px solid rgba(196, 192, 255, 0.1);
+    transition: all 0.4s ease;
+  }
+  
+  .glass-card-alt:hover {
+    transform: scale(1.01);
+    border-color: rgba(196, 192, 255, 0.25);
   }
 
-  /* glass-panel: a subtler variant of glass-card used for containers/panels */
   .glass-panel {
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+  }
+
+  .premium-button {
+    @apply relative overflow-hidden transition-all duration-300 active:scale-95;
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-container) 100%);
+    box-shadow: 0 4px 15px rgba(196, 192, 255, 0.2);
+  }
+
+  .premium-button::after {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), transparent);
+  }
+
+  .premium-button:hover::after {
+    @apply opacity-100;
+  }
+
+  .floating-anim {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(0.5deg); }
+    100% { transform: translateY(0px) rotate(0deg); }
+  }
+
+  .stagger-load > * {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  }
+
+  @keyframes fadeInUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   .radial-glow {
-    background: radial-gradient(circle at center, rgba(196, 192, 255, 0.12) 0%, rgba(14, 19, 34, 0) 70%);
-  }
-
-  .orb-indigo {
-    background: radial-gradient(circle, rgba(196, 192, 255, 0.15) 0%, rgba(196, 192, 255, 0) 70%);
-  }
-
-  .orb-teal {
-    background: radial-gradient(circle, rgba(135, 129, 255, 0.1) 0%, rgba(135, 129, 255, 0) 70%);
+    background: radial-gradient(circle at center, rgba(196, 192, 255, 0.15) 0%, rgba(14, 19, 34, 0) 70%);
   }
 
   .input-glow:focus {
-    box-shadow: 0 0 15px rgba(196, 192, 255, 0.2);
+    box-shadow: 0 0 20px rgba(196, 192, 255, 0.15);
+    border-color: var(--color-primary) !important;
   }
 
-  .input-underline {
-    position: relative;
-  }
-
-  .input-underline::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #c4c0ff;
-    transition: width 0.5s ease;
-  }
-
-  .group:focus-within .input-underline::after {
-    width: 100%;
+  /* Responsive Grid Adjustments */
+  .adaptive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
   }
 }
 
 @layer utilities {
   .text-shadow-glow {
-    text-shadow: 0 0 20px rgba(196, 192, 255, 0.3);
+    text-shadow: 0 0 20px rgba(196, 192, 255, 0.4);
+  }
+  
+  .perspective-1000 {
+    perspective: 1000px;
   }
 }
 
-/* Font family utilities */
-.font-headline {
-  font-family: 'Noto Serif', serif;
+/* Base resets & improvements */
+* {
+  @apply selection:bg-primary/30 selection:text-white;
 }
 
-.font-body {
-  font-family: 'Manrope', sans-serif;
+button, a {
+  @apply cursor-pointer;
 }
 
-.font-label {
-  font-family: 'Manrope', sans-serif;
+/* Scrollbar polish */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
-/* Global Fix: Ensure all buttons show pointer cursor */
-button {
-  cursor: pointer;
-}

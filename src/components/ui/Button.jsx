@@ -10,23 +10,24 @@ const Button = ({
   ...props
 }) => {
   const baseStyles =
-    'font-label font-semibold tracking-wide rounded-xl transition-all duration-300 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed';
+    'font-label font-semibold tracking-wider rounded-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] sm:text-xs premium-button';
 
   const variants = {
     primary:
-      'bg-gradient-to-br from-primary to-primary-container text-on-primary-container hover:shadow-[0_0_25px_rgba(196,192,255,0.3)]',
+      'bg-gradient-to-br from-primary to-primary-container text-on-primary-container shadow-[0_8px_20px_rgba(196,192,255,0.15)] hover:shadow-primary/30',
     secondary:
-      'bg-surface-container-high text-on-surface hover:bg-surface-container-high/80',
+      'glass-card text-on-surface hover:bg-white/10',
     outline:
-      'border border-outline-variant text-on-surface hover:bg-surface-container-high/30',
-    ghost: 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/20',
+      'border border-white/10 text-on-surface hover:bg-white/5 hover:border-white/20',
+    ghost: 
+      'text-on-surface-variant hover:text-on-surface hover:bg-white/5',
   };
 
   const sizes = {
-    sm: 'px-4 py-2 text-xs',
-    md: 'px-6 py-3 text-sm',
-    lg: 'px-8 py-4 text-base',
-    full: 'w-full py-4 text-sm',
+    sm: 'px-6 py-2.5',
+    md: 'px-8 py-3.5',
+    lg: 'px-10 py-4.5',
+    full: 'w-full py-4',
   };
 
   return (
