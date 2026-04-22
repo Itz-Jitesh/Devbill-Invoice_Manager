@@ -72,20 +72,14 @@ const InvoiceDetailHeader = ({ invoiceNumber, status, onEdit }) => {
         </button>
         <button 
           onClick={() => alert('PDF Download coming soon!')}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white transition-all duration-300 group"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl text-on-surface-variant hover:bg-white/5 hover:text-white transition-all duration-300 group mr-6"
         >
           <Icon name="download" size="lg" className="group-hover:scale-110 transition-transform" />
           <span className="font-body text-sm font-medium">Download PDF</span>
         </button>
-
-        <div className="h-6 w-[1px] bg-white/10 mx-2" />
-
-        <div className="flex items-center gap-3">
-          <Icon name="notifications" size="lg" className="text-on-surface-variant hover:text-white cursor-pointer transition-colors" />
-          <Icon name="account_circle" size="xl" className="text-on-surface-variant hover:text-white cursor-pointer transition-colors" />
-        </div>
       </div>
     </header>
+
   );
 };
 

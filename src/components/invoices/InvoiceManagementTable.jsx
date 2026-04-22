@@ -71,14 +71,15 @@ const InvoiceManagementTable = ({ invoices }) => {
                 </td>
                 <td className="px-8 py-8 text-center">
                   <span className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
-                    invoice.status === 'paid' ? 'bg-secondary/10 text-secondary border-secondary/20' :
-                    invoice.status === 'pending' || invoice.status === 'sent' ? 'bg-tertiary/10 text-tertiary border-tertiary/20' :
-                    invoice.status === 'overdue' ? 'bg-error/10 text-error border-error/20' :
+                    invoice.status?.toLowerCase() === 'paid' ? 'bg-secondary/10 text-secondary border-secondary/20' :
+                    invoice.status?.toLowerCase() === 'pending' || invoice.status?.toLowerCase() === 'sent' ? 'bg-primary/10 text-primary border-primary/20' :
+                    invoice.status?.toLowerCase() === 'overdue' ? 'bg-error/10 text-error border-error/20' :
                     'bg-white/5 text-on-surface-variant border-white/10'
                   }`}>
-                    {invoice.status}
+                    {invoice.status?.toLowerCase() === 'pending' ? 'Sent' : invoice.status}
                   </span>
                 </td>
+
                 <td className="px-8 py-8 text-on-surface-variant font-label text-sm opacity-80"><FormattedDate date={invoice.date} /></td>
                 <td className="px-8 py-8 text-on-surface-variant font-label text-sm opacity-80">{invoice.dueDate ? <FormattedDate date={invoice.dueDate} /> : 'N/A'}</td>
                 <td className="px-8 py-8 text-right">

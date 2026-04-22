@@ -31,8 +31,14 @@ export default function InvoicesPage() {
     if (selectedStatus === 'All') {
       result = result.filter(inv => inv.status !== 'cancelled');
     } else {
-      result = result.filter((inv) => inv.status?.toLowerCase() === selectedStatus.toLowerCase());
+      result = result.filter((inv) => {
+        const s = inv.status?.toLowerCase();
+        const sel = selectedStatus.toLowerCase();
+        if (sel === 'sent') return s === 'sent' || s === 'pending';
+        return s === sel;
+      });
     }
+
 
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();

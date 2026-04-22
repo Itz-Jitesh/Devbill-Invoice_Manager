@@ -27,10 +27,12 @@ export default function InvoiceDetailPage() {
 
   useEffect(() => {
     fetchInvoices();
-  }, [fetchInvoices]);
-
-  const invoice = useMemo(
-    () => invoices.find((inv) => String(inv._id) === String(id)) || null,
+  }, [fetchInvoices]);  const invoice = useMemo(
+    () => invoices.find((inv) => 
+      String(inv._id) === String(id) || 
+      String(inv.invoiceNumber) === String(id) ||
+      String(inv.invoiceNumber) === `INV-${String(id).padStart(4, '0')}` // Handle numeric-only IDs in URL
+    ) || null,
     [invoices, id]
   );
 
@@ -43,14 +45,14 @@ export default function InvoiceDetailPage() {
     setEditForm({
       title: invoice.title || '',
       amount: invoice.amount || '',
-      status: invoice.status || 'pending',
+      status: invoice.status || 'sent',
     });
     setIsEditModalOpen(true);
   };
 
   const handleSaveEdit = async (e) => {
     e.preventDefault();
-    const { success, error: updateError } = await updateInvoice(id, {
+    const { success, error: updateError } = await updateInvoice(invoice._id || id, {
       title: editForm.title,
       amount: Number(editForm.amount),
       status: editForm.status,
@@ -96,23 +98,23 @@ export default function InvoiceDetailPage() {
     );
   }
 
-
   return (
     <div className="relative min-h-screen pb-24">
       {/* Sticky Header */}
       <InvoiceDetailHeader
         invoiceNumber={invoice.invoiceNumber || invoice._id}
-        status={invoice.status}
+        status={invoice.status?.toLowerCase() === 'pending' ? 'Sent' : invoice.status}
         onEdit={handleEdit}
       />
 
       {/* Content Layout - Full width, no sidebar */}
       <main className="px-8 pt-8 space-y-16 max-w-6xl mx-auto w-full">
         <InvoiceMainCard invoice={invoice} />
-        <StatusTimeline />
+        <StatusTimeline status={invoice.status} date={invoice.date} />
       </main>
 
       {/* Edit Modal */}
+
       {isEditModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
           <div className="glass-panel rounded-2xl p-8 max-w-lg w-full border border-white/10">

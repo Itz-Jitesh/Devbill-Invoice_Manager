@@ -20,6 +20,13 @@ export default function DashboardPage() {
   const { showToast } = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const displayName = user?.name || user?.username || 'Alex';
+  
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good morning';
+    if (hour < 18) return 'Good afternoon';
+    return 'Good evening';
+  }, []);
 
   useEffect(() => {
     fetchInvoices();
@@ -62,8 +69,9 @@ export default function DashboardPage() {
       {/* Greeting */}
       <section className="animate-in fade-in slide-in-from-top-4 duration-1000">
         <h2 className="text-7xl font-headline font-bold tracking-tighter text-on-surface mb-4 leading-tight text-shadow-glow">
-          Good morning, {displayName}
+          {greeting}, {displayName}
         </h2>
+
         <p className="text-on-surface-variant text-xl max-w-2xl font-body leading-relaxed opacity-60">
           {loading.invoices ? (
             'Loading your business performance...'

@@ -336,14 +336,15 @@ const DataProviderInner = ({ children }) => {
   // Computed stats for Dashboard
   const stats = useMemo(() => ({
     totalRevenue: invoices
-      .filter(inv => inv.status === 'paid')
+      .filter(inv => inv.status?.toLowerCase() === 'paid')
       .reduce((sum, inv) => sum + inv.amount, 0),
     pendingAmount: invoices
-      .filter(inv => inv.status === 'pending' || inv.status === 'sent')
+      .filter(inv => inv.status?.toLowerCase() === 'pending' || inv.status?.toLowerCase() === 'sent')
       .reduce((sum, inv) => sum + inv.amount, 0),
     totalProjects: invoices.length,
-    duePaymentsCount: invoices.filter(inv => inv.status === 'pending' || inv.status === 'sent').length,
+    duePaymentsCount: invoices.filter(inv => inv.status?.toLowerCase() === 'pending' || inv.status?.toLowerCase() === 'sent').length,
   }), [invoices]);
+
 
   const value = useMemo(() => ({
     invoices,

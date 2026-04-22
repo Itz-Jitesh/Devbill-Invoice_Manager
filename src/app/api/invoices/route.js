@@ -79,7 +79,7 @@ export async function POST(request) {
       );
     }
 
-    // 3. Atomic counter for sequential invoice number
+    // 3. Generate professional alphanumeric invoice number
     let invoiceNumber = body.invoiceNumber;
     if (!invoiceNumber) {
       const { data: nextNum, error: rpcError } = await supabase
@@ -88,7 +88,8 @@ export async function POST(request) {
       if (rpcError) {
         throw new Error('Failed to generate invoice number: ' + rpcError.message);
       }
-      invoiceNumber = nextNum;
+      // Formatting to professional style: INV- followed by 4+ digits
+      invoiceNumber = `INV-${String(nextNum).padStart(4, '0')}`;
     }
 
     // 4. Server-side totals calculation (if items present)
@@ -101,13 +102,14 @@ export async function POST(request) {
     const invoiceData = {
       title: body.title,
       amount: amount,
-      status: body.status || 'pending',
+      status: body.status || 'sent',
       client_id: body.clientId,
       date: body.date || new Date(),
       due_date: body.dueDate,
       invoice_number: invoiceNumber,
       user_id: auth.user._id
     };
+
 
     const { data: invoice, error: insertError } = await supabase
       .from('invoices')

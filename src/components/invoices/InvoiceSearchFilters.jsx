@@ -2,7 +2,8 @@ import Icon from '@/components/ui/Icon';
 
 // Pure presentational — handlers passed from parent (Invoices page)
 const InvoiceSearchFilters = ({ searchQuery, setSearchQuery, selectedStatus, setSelectedStatus }) => {
-  const statuses = ['All', 'Draft', 'Sent', 'Paid', 'Overdue'];
+  const statuses = ['All', 'Sent', 'Paid', 'Overdue'];
+
 
   return (
     <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-12">

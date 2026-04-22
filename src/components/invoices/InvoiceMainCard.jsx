@@ -9,13 +9,18 @@ const InvoiceMainCard = ({ invoice }) => {
       {/* Header: Bill To & Invoice Details */}
       <div className="flex justify-between items-start mb-20 relative z-10">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-label mb-5 font-bold">Bill To</p>
-          <h3 className="text-3xl font-bold font-headline text-white mb-3 tracking-tight">{invoice.clientName}</h3>
-          <p className="text-on-surface-variant font-body text-sm">{invoice.clientEmail || 'billing@client.com'}</p>
-          <p className="text-on-surface-variant font-body text-sm mt-3 leading-relaxed max-w-xs opacity-70">
-            {invoice.clientAddress || '1200 Pacific Ave, Suite 300\nSan Francisco, CA 94109'}
+          <p className="text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-label mb-5 font-bold text-shadow-glow">Bill To</p>
+          <h3 className="text-3xl font-bold font-headline text-white mb-3 tracking-tight">
+            {invoice?.clientId?.name || invoice?.clientName || 'Valued Client'}
+          </h3>
+          <p className="text-on-surface-variant font-body text-sm opacity-60">
+            {invoice?.clientId?.email || invoice?.clientEmail || 'billing@client.com'}
+          </p>
+          <p className="text-on-surface-variant font-body text-sm mt-3 leading-relaxed max-w-xs opacity-50 whitespace-pre-wrap">
+            {invoice?.clientId?.company || invoice?.clientAddress || 'Commercial Partner\nRemote Workspace'}
           </p>
         </div>
+
         <div className="text-right">
           <p className="text-[10px] uppercase tracking-[0.3em] text-on-surface-variant font-label mb-5 font-bold">Invoice Details</p>
           <div className="space-y-3">
@@ -59,13 +64,14 @@ const InvoiceMainCard = ({ invoice }) => {
           ) : (
             <div className="grid grid-cols-12 items-center p-6 rounded-2xl hover:bg-white/5 transition-all duration-300 group">
               <div className="col-span-6">
-                <h4 className="text-white font-body font-semibold tracking-tight">Web Infrastructure Design</h4>
-                <p className="text-xs text-on-surface-variant mt-2 opacity-60">Architecture and cloud deployment planning</p>
+                <h4 className="text-white font-body font-semibold tracking-tight">{invoice?.title || 'Professional Service'}</h4>
+                <p className="text-xs text-on-surface-variant mt-2 opacity-60">Consulting and fulfillment of deliverables</p>
               </div>
               <div className="col-span-2 text-center text-white/80 font-body text-sm">1</div>
-              <div className="col-span-2 text-right text-white/80 font-body text-sm">$4,500.00</div>
-              <div className="col-span-2 text-right text-white font-body font-bold tracking-tight">$4,500.00</div>
+              <div className="col-span-2 text-right text-white/80 font-body text-sm">${(invoice?.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
+              <div className="col-span-2 text-right text-white font-body font-bold tracking-tight">${(invoice?.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</div>
             </div>
+
           )}
         </div>
       </div>
@@ -75,20 +81,25 @@ const InvoiceMainCard = ({ invoice }) => {
         <div className="w-80 space-y-5">
           <div className="flex justify-between items-center px-4">
             <span className="text-on-surface-variant font-body text-sm">Subtotal</span>
-            <span className="text-white font-body font-semibold">${(invoice.subtotal || 10020).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            <span className="text-white font-body font-semibold">
+              ${((invoice?.amount || 0) / 1.1).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </span>
           </div>
           <div className="flex justify-between items-center px-4">
-            <span className="text-on-surface-variant font-body text-sm text-shadow-glow">Tax (8%)</span>
-            <span className="text-white font-body font-semibold">${(invoice.taxAmount || 801.60).toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            <span className="text-on-surface-variant font-body text-sm text-shadow-glow">Tax (10%)</span>
+            <span className="text-white font-body font-semibold">
+              ${((invoice?.amount || 0) - (invoice?.amount || 0) / 1.1).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            </span>
           </div>
-          <div className="flex justify-between items-center pt-8 border-t border-white/20 mt-4 px-4 bg-primary/5 rounded-2xl py-6">
-            <span className="text-white font-headline text-xl opacity-80 uppercase tracking-widest text-xs font-bold font-label">Grand Total</span>
+          <div className="flex justify-between items-center pt-8 border-t border-white/20 mt-4 px-4 bg-primary/5 rounded-2xl py-6 shadow-inner">
+            <span className="text-white font-headline text-xl opacity-80 uppercase tracking-widest text-[10px] font-bold font-label">Grand Total</span>
             <span className="text-white font-headline text-4xl font-bold tracking-tighter text-shadow-glow">
-              ${(invoice.total || 10821.60).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              ${(invoice?.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
             </span>
           </div>
         </div>
       </div>
+
     </section>
   );
 };
