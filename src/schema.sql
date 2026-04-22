@@ -1,7 +1,12 @@
--- Supabase PostgreSQL Schema
+-- SUPABASE INITIALIZATION SCRIPT
+-- RUN THIS IN THE SUPABASE SQL EDITOR (https://supabase.com/dashboard/project/_/sql)
 
+-- 1. ENABLE EXTENSIONS
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- 2. CREATE TABLES
 -- Users table linking to auth.users (if you want to keep username)
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
   id uuid PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   username text NOT NULL,
   email text UNIQUE NOT NULL,
@@ -14,7 +19,7 @@ ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access their own profile" ON users FOR ALL USING (auth.uid() = id);
 
 -- Clients table
-CREATE TABLE clients (
+CREATE TABLE IF NOT EXISTS clients (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   name text NOT NULL,
   email text,
@@ -30,7 +35,7 @@ ALTER TABLE clients ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access their own clients" ON clients FOR ALL USING (auth.uid() = user_id);
 
 -- Invoices table
-CREATE TABLE invoices (
+CREATE TABLE IF NOT EXISTS invoices (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   title text NOT NULL,
   amount numeric NOT NULL,
@@ -52,7 +57,7 @@ ALTER TABLE invoices ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Users can only access their own invoices" ON invoices FOR ALL USING (auth.uid() = user_id);
 
 -- Invoice Counter table
-CREATE TABLE invoice_counters (
+CREATE TABLE IF NOT EXISTS invoice_counters (
   id uuid PRIMARY KEY DEFAULT uuid_generate_v4(),
   user_id uuid UNIQUE NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   next_number integer DEFAULT 1

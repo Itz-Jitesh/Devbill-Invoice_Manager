@@ -30,6 +30,8 @@ export async function GET(request, { params }) {
       ...invoice,
       _id: invoice.id,
       userId: invoice.user_id,
+      invoiceNumber: invoice.invoice_number,
+      dueDate: invoice.due_date,
       clientId: { ...invoice.clientId, _id: invoice.client_id }
     };
 
@@ -72,6 +74,8 @@ export async function PUT(request, { params }) {
       ...updatedInvoice,
       _id: updatedInvoice.id,
       userId: updatedInvoice.user_id,
+      invoiceNumber: updatedInvoice.invoice_number,
+      dueDate: updatedInvoice.due_date,
       clientId: { ...updatedInvoice.clientId, _id: updatedInvoice.client_id }
     };
 

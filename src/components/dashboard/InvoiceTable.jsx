@@ -19,6 +19,7 @@ const InvoiceTable = ({ invoices }) => {
         <thead>
           <tr className="bg-surface-container-low/50">
             <th className="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Client</th>
+            <th className="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Invoice #</th>
             <th className="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Amount</th>
             <th className="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Status</th>
             <th className="px-8 py-5 text-xs font-bold text-on-surface-variant uppercase tracking-wider">Date</th>
@@ -41,6 +42,11 @@ const InvoiceTable = ({ invoices }) => {
                     <div className="font-medium text-on-surface">{invoice?.clientId?.name || 'Unknown'}</div>
                     <div className="text-xs text-on-surface-variant">{invoice?.title || 'Untitled'}</div>
                   </div>
+                </div>
+              </td>
+              <td className="px-8 py-6">
+                <div className="font-mono text-xs text-on-surface-variant font-bold bg-white/5 px-2 py-1 rounded border border-white/5 inline-block">
+                  #{invoice?.invoiceNumber || '---'}
                 </div>
               </td>
               <td className="px-8 py-6">

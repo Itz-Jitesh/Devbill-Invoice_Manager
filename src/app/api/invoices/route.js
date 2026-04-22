@@ -29,6 +29,8 @@ export async function GET(request) {
       ...inv,
       _id: inv.id,
       userId: inv.user_id,
+      invoiceNumber: inv.invoice_number,
+      dueDate: inv.due_date,
       clientId: inv.clientId ? { ...inv.clientId, _id: inv.client_id } : null
     }));
 
@@ -101,7 +103,7 @@ export async function POST(request) {
       amount: amount,
       status: body.status || 'pending',
       client_id: body.clientId,
-      date: body.date || new column(),
+      date: body.date || new Date(),
       due_date: body.dueDate,
       invoice_number: invoiceNumber,
       user_id: auth.user._id
@@ -129,6 +131,8 @@ export async function POST(request) {
       ...invoice,
       _id: invoice.id,
       userId: invoice.user_id,
+      invoiceNumber: invoice.invoice_number,
+      dueDate: invoice.due_date,
       clientId: { ...invoice.clientId, _id: invoice.client_id }
     };
 
