@@ -8,10 +8,14 @@ import supabase from '@/lib/supabase';
  */
 export async function POST(request) {
   try {
-    const { email, password } = await request.json();
+    const body = await request.json();
+    console.log('Login attempt for:', body.email);
+
+    const { email, password } = body;
 
     // 1. Validate input
     if (!email || !password) {
+      console.log('Missing credentials in request body');
       return NextResponse.json(
         { message: 'Email and password are required' },
         { status: 400 }
@@ -19,39 +23,67 @@ export async function POST(request) {
     }
 
     // 2. Normalize email
-    const normalizedEmail = email.toLowerCase();
+    const normalizedEmail = email.toLowerCase().trim();
 
     // 3. Authenticate with Supabase
+    console.log('Calling Supabase signInWithPassword...');
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email: normalizedEmail,
       password: password,
     });
 
-    if (authError || !authData.user) {
-      return NextResponse.json({ message: 'Invalid credentials' }, { status: 401 });
+    if (authError) {
+      console.error('Supabase Auth Error:', {
+        status: authError.status,
+        message: authError.message,
+        code: authError.code
+      });
+
+      // Handle specific error cases
+      if (authError.message.includes('Email not confirmed')) {
+        return NextResponse.json(
+          { message: 'Please confirm your email address before logging in.' },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        { message: authError.message || 'Invalid credentials' },
+        { status: authError.status || 401 }
+      );
     }
 
-    // Fetch user details from custom table (if needed for username)
-    // Supabase auth.users raw_user_meta_data can also hold username
+    if (!authData.user || !authData.session) {
+      console.error('No user or session in auth response');
+      return NextResponse.json({ message: 'Authentication failed' }, { status: 401 });
+    }
+
+    console.log('Login successful for user:', authData.user.id);
+
+    // 4. Fetch user details from public.users table (optional fallback)
     let username = authData.user.user_metadata?.username;
     
-    // Attempt to pull from public.users table just in case
-    const { data: userRecord } = await supabase
-      .from('users')
-      .select('username')
-      .eq('id', authData.user.id)
-      .single();
-      
-    if (userRecord && userRecord.username) {
-      username = userRecord.username;
+    try {
+      const { data: userRecord } = await supabase
+        .from('users')
+        .select('username')
+        .eq('id', authData.user.id)
+        .single();
+        
+      if (userRecord && userRecord.username) {
+        username = userRecord.username;
+      }
+    } catch (dbError) {
+      console.warn('Could not fetch additional user meta from DB:', dbError.message);
     }
 
     const token = authData.session.access_token;
 
-    // Set Secure HTTP-Only Cookie
+    // 5. Create Response and Set Secure HTTP-Only Cookie
     const response = NextResponse.json(
       {
-        token, // Supabase JWT access token
+        message: 'Login successful',
+        token,
         user: {
           id: authData.user.id,
           name: username || authData.user.email,
@@ -67,14 +99,14 @@ export async function POST(request) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       path: '/',
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7, // 1 week
     });
 
     return response;
   } catch (error) {
-    console.error('Login error:', error.message);
+    console.error('SERVER FATAL LOGIN ERROR:', error);
     return NextResponse.json(
-      { message: 'Server error', error: error.message },
+      { message: 'An unexpected server error occurred', error: error.message },
       { status: 500 }
     );
   }
