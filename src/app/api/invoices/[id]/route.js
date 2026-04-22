@@ -26,14 +26,24 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Invoice not found or access denied' }, { status: 404 });
     }
 
+    // Normalize for frontend
+    let displayInvoiceNumber = invoice.invoice_number;
+    const currentYear = new Date().getFullYear();
+    
+    if (displayInvoiceNumber && !isNaN(displayInvoiceNumber)) {
+      const invYear = invoice.date ? new Date(invoice.date).getFullYear() : currentYear;
+      displayInvoiceNumber = `INV-${invYear}-${String(displayInvoiceNumber).padStart(4, '0')}`;
+    }
+
     const normalizedInvoice = {
       ...invoice,
       _id: invoice.id,
       userId: invoice.user_id,
-      invoiceNumber: invoice.invoice_number,
+      invoiceNumber: displayInvoiceNumber || `INV-${currentYear}-0000`,
       dueDate: invoice.due_date,
-      clientId: { ...invoice.clientId, _id: invoice.client_id }
+      clientId: invoice.clientId ? { ...invoice.clientId, _id: invoice.client_id } : null
     };
+
 
     return NextResponse.json(normalizedInvoice);
   } catch (error) {

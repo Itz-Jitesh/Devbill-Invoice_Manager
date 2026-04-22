@@ -48,21 +48,25 @@ export default function DashboardPage() {
     { title: 'Due Payments', value: stats.duePaymentsCount.toString(), trendValue: 'Action needed', trendColor: 'text-teal-400', bgColor: 'bg-teal-400/10' },
   ];
 
-  // Filter recent invoices by search term
-  const filteredRecentInvoices = useMemo(() => {
-    let result = invoices.slice(0, 5); 
-    if (searchTerm.trim()) {
-      const term = searchTerm.toLowerCase();
+  // Global Search: Filter both invoices and clients
+  const searchResults = useMemo(() => {
+    if (!searchTerm.trim()) return { recentInvoices: invoices.slice(0, 5), matchedClients: [] };
+    
+    const term = searchTerm.toLowerCase();
+    
+    const matchedInvoices = invoices.filter(inv =>
+      inv.title?.toLowerCase().includes(term) ||
+      inv.clientId?.name?.toLowerCase().includes(term) ||
+      inv.invoiceNumber?.toLowerCase().includes(term)
+    ).slice(0, 5);
 
-      result = invoices.filter(inv =>
-        inv.title?.toLowerCase().includes(term) ||
-        inv.clientId?.name?.toLowerCase().includes(term) ||
-        inv.status?.toLowerCase().includes(term) ||
-        inv.invoiceNumber?.toLowerCase().includes(term)
-      ).slice(0, 5);
-    }
-    return result;
-  }, [invoices, searchTerm]);
+    const matchedClients = clients.filter(client =>
+      client.name?.toLowerCase().includes(term) ||
+      client.company?.toLowerCase().includes(term)
+    ).slice(0, 4);
+
+    return { recentInvoices: matchedInvoices, matchedClients };
+  }, [invoices, clients, searchTerm]);
 
   return (
     <div className="space-y-16 py-8">
@@ -88,22 +92,26 @@ export default function DashboardPage() {
         ))}
       </section>
 
-      {/* Recent Invoices */}
+      {/* Search & Results Section */}
       <section className="space-y-10">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
           <div>
-            <h3 className="text-3xl font-headline font-bold text-on-surface tracking-tight">Recent Invoices</h3>
-            <p className="text-on-surface-variant text-sm mt-2 font-body opacity-60">Manage your latest billing activities and statuses.</p>
+            <h3 className="text-3xl font-headline font-bold text-on-surface tracking-tight">
+              {searchTerm ? 'Search Results' : 'Recent Activity'}
+            </h3>
+            <p className="text-on-surface-variant text-sm mt-2 font-body opacity-60">
+              {searchTerm ? `Found ${searchResults.recentInvoices.length} invoices and ${searchResults.matchedClients.length} clients.` : 'Manage your latest billing activities and statuses.'}
+            </p>
           </div>
           <div className="flex items-center gap-4">
             {/* Search Input */}
-            <div className="glass-panel px-5 py-3 rounded-2xl flex items-center min-w-[320px] focus-within:border-primary/50 transition-all border border-white/5">
-              <Icon name="search" size="lg" className="text-on-surface-variant opacity-40 mr-3" />
+            <div className="glass-panel px-5 py-3 rounded-2xl flex items-center min-w-[320px] focus-within:border-primary/50 transition-all border border-white/10 group bg-white/[0.02]">
+              <Icon name="search" size="lg" className="text-primary/40 group-focus-within:text-primary transition-colors mr-3" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Find an invoice..."
+                placeholder="Search invoices or clients..."
                 className="bg-transparent border-none focus:ring-0 text-sm font-body w-full placeholder:text-on-surface-variant/30 text-white"
               />
             </div>
@@ -117,19 +125,50 @@ export default function DashboardPage() {
             </Button>
           </div>
         </div>
+
+        {/* Matched Clients (Only if searching) */}
+        {searchTerm && searchResults.matchedClients.length > 0 && (
+          <div className="animate-in fade-in slide-in-from-left-4 duration-500 mb-12">
+            <h4 className="text-[10px] font-label uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-6 opacity-40">Matching Clients</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {searchResults.matchedClients.map(client => (
+                <div 
+                  key={client._id} 
+                  onClick={() => router.push('/clients')}
+                  className="glass-panel p-6 rounded-2xl border-white/5 hover:border-primary/20 transition-all cursor-pointer group"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase group-hover:scale-110 transition-transform">
+                      {client.name?.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-white font-body font-bold text-sm tracking-tight">{client.name}</p>
+                      <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-label opacity-40">{client.company || 'Private Entity'}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className="stagger-load">
-          <InvoiceTable invoices={filteredRecentInvoices} />
+          <h4 className="text-[10px] font-label uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-6 opacity-40">
+            {searchTerm ? 'Matching Invoices' : 'Recent Invoices'}
+          </h4>
+          <InvoiceTable invoices={searchResults.recentInvoices} />
         </div>
 
-        {searchTerm && filteredRecentInvoices.length === 0 && (
-          <div className="text-center py-24 glass-panel rounded-3xl border-white/5">
-            <Icon name="search_off" size="xl" className="text-on-surface-variant/20 mb-6" />
-            <p className="text-on-surface-variant font-headline text-lg">No invoices found matching &quot;{searchTerm}&quot;</p>
+        {searchTerm && searchResults.recentInvoices.length === 0 && searchResults.matchedClients.length === 0 && (
+          <div className="text-center py-24 glass-panel rounded-[40px] border-white/5 shadow-inner bg-white/[0.01]">
+            <Icon name="search_off" size="xl" className="text-on-surface-variant/10 mb-6 scale-150" />
+            <p className="text-on-surface-variant font-headline text-2xl font-bold mb-2">No global matches found</p>
+            <p className="text-on-surface-variant/40 font-body text-sm">Refine your term or browse all records manually.</p>
           </div>
         )}
       </section>
     </div>
   );
 }
+
 

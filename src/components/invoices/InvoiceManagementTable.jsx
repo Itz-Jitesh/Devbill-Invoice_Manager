@@ -49,10 +49,11 @@ const InvoiceManagementTable = ({ invoices }) => {
                 onClick={() => router.push(`/invoices/${invoice._id}`)}
               >
                 <td className="px-8 py-8">
-                  <div className="font-mono text-xs text-on-surface-variant font-bold bg-white/5 px-2 py-1 rounded border border-white/5 inline-block">
-                    #{invoice.invoiceNumber || '---'}
+                  <div className="font-mono text-xs text-on-surface-variant font-bold bg-white/5 px-2 py-1 rounded border border-white/5 inline-block whitespace-nowrap">
+                    {invoice.invoiceNumber || '---'}
                   </div>
                 </td>
+
                 <td className="px-8 py-8">
                   <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border border-white/5 ${

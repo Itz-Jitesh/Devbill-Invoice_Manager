@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Icon from '@/components/ui/Icon';
 
 /**
  * Public Invoice View Page
- * @description Public-facing invoice view that does NOT require authentication.
- * Route: /invoice/[id]/view
  */
 export default function PublicInvoiceView() {
   const { id } = useParams();
+
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -52,19 +52,20 @@ export default function PublicInvoiceView() {
   if (error || !invoice) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="glass-panel rounded-3xl p-12 text-center max-w-md">
-          <span className="material-symbols-outlined text-6xl text-error/50 mb-4">receipt_long</span>
-          <h1 className="font-headline text-2xl font-bold text-on-surface mb-2">Invoice Not Found</h1>
-          <p className="text-on-surface-variant font-body mb-6">
+        <div className="glass-panel rounded-3xl p-12 text-center max-w-md animate-in zoom-in-95 duration-500">
+          <Icon name="receipt_long" size="xl" className="text-error/30 mb-6 scale-150" />
+          <h1 className="font-headline text-3xl font-bold text-white mb-3 tracking-tight">Invoice Not Found</h1>
+          <p className="text-on-surface-variant font-body mb-8 opacity-60 leading-relaxed">
             {error || 'This invoice may have been deleted or the link is incorrect.'}
           </p>
-          <p className="text-on-surface-variant/50 text-sm font-body">
+          <p className="text-[10px] text-on-surface-variant/40 font-label uppercase tracking-widest">
             Please contact the sender for assistance.
           </p>
         </div>
       </div>
     );
   }
+
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
@@ -105,13 +106,14 @@ export default function PublicInvoiceView() {
           <div className="bg-surface-container-low/50 p-8 sm:p-10 border-b border-white/5">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
-                <p className="text-on-surface-variant/60 font-label text-xs uppercase tracking-widest mb-1">
+                <p className="text-on-surface-variant/60 font-label text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">
                   Invoice
                 </p>
-                <h1 className="font-headline text-3xl sm:text-4xl font-bold text-on-surface">
-                  {invoice.invoiceNumber || `#${invoice._id?.slice(-6).toUpperCase()}`}
+                <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white tracking-tighter text-shadow-glow">
+                  {invoice.invoiceNumber || 'INV-0000'}
                 </h1>
               </div>
+
               <span
                 className={`inline-flex px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider border ${getStatusColor(
                   invoice.status
@@ -197,12 +199,13 @@ export default function PublicInvoiceView() {
         </div>
 
         {/* Security Notice */}
-        <div className="mt-6 text-center">
-          <p className="text-on-surface-variant/30 font-body text-xs flex items-center justify-center gap-1">
-            <span className="material-symbols-outlined text-sm">lock</span>
-            This is a secure, view-only invoice link
+        <div className="mt-8 text-center animate-in fade-in duration-1000 delay-500">
+          <p className="text-on-surface-variant/30 font-body text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 font-bold">
+            <Icon name="lock" size="sm" className="text-primary/40" />
+            Secure view-only transaction
           </p>
         </div>
+
       </div>
     </div>
   );

@@ -168,21 +168,22 @@ export default function ClientsPage() {
       )}
 
       {/* Floating Search Bar */}
-      <div className="fixed bottom-10 left-[calc(50%+144px)] -translate-x-1/2 w-full max-w-xl px-4 z-50">
-        <div className="glass-card rounded-2xl flex items-center p-2 shadow-2xl backdrop-blur-3xl border-primary/20">
-          <span className="material-symbols-outlined ml-4 text-on-surface-variant/60">search</span>
+      <div className="fixed bottom-10 left-[calc(50%+144px)] -translate-x-1/2 w-full max-w-xl px-4 z-50 animate-in slide-in-from-bottom-8 duration-1000">
+        <div className="glass-panel rounded-3xl flex items-center p-3 shadow-[0_30px_60px_rgba(0,0,0,0.5)] backdrop-blur-3xl border-white/10 focus-within:border-primary/40 transition-all">
+          <Icon name="search" size="lg" className="ml-4 text-primary/60" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Quick search clients..."
-            className="bg-transparent border-none focus:ring-0 text-sm font-body w-full placeholder:text-on-surface-variant/30 text-white"
+            placeholder="Search by name, email, or company..."
+            className="bg-transparent border-none focus:ring-0 text-md font-body w-full px-4 placeholder:text-on-surface-variant/30 text-white"
           />
-          <kbd className="hidden md:flex items-center gap-1 glass-card px-2 py-1 rounded-lg text-[10px] font-label text-on-surface-variant/40 mr-2 border-white/10">
+          <kbd className="hidden md:flex items-center gap-1 bg-white/5 px-2.5 py-1.5 rounded-xl text-[10px] font-label text-on-surface-variant/40 mr-2 border border-white/5">
             <span className="text-[14px]">⌘</span>K
           </kbd>
         </div>
       </div>
+
     </div>
   );
 }

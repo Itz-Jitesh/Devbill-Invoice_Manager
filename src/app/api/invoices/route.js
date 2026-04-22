@@ -25,14 +25,26 @@ export async function GET(request) {
     }
 
     // Normalize for frontend
-    const normalizedInvoices = invoices.map(inv => ({
-      ...inv,
-      _id: inv.id,
-      userId: inv.user_id,
-      invoiceNumber: inv.invoice_number,
-      dueDate: inv.due_date,
-      clientId: inv.clientId ? { ...inv.clientId, _id: inv.client_id } : null
-    }));
+    const currentYear = new Date().getFullYear();
+    const normalizedInvoices = invoices.map(inv => {
+      let displayInvoiceNumber = inv.invoice_number;
+      
+      // If it's just a number (like "1", "2", 3), professionalize it
+      if (displayInvoiceNumber && !isNaN(displayInvoiceNumber)) {
+        const invYear = inv.date ? new Date(inv.date).getFullYear() : currentYear;
+        displayInvoiceNumber = `INV-${invYear}-${String(displayInvoiceNumber).padStart(4, '0')}`;
+      }
+
+      return {
+        ...inv,
+        _id: inv.id,
+        userId: inv.user_id,
+        invoiceNumber: displayInvoiceNumber || `INV-${currentYear}-0000`,
+        dueDate: inv.due_date,
+        clientId: inv.clientId ? { ...inv.clientId, _id: inv.client_id } : null
+      };
+    });
+
 
     return NextResponse.json(normalizedInvoices);
   } catch (error) {
@@ -88,9 +100,11 @@ export async function POST(request) {
       if (rpcError) {
         throw new Error('Failed to generate invoice number: ' + rpcError.message);
       }
-      // Formatting to professional style: INV- followed by 4+ digits
-      invoiceNumber = `INV-${String(nextNum).padStart(4, '0')}`;
+      // Formatting to professional style: INV-YYYY-XXXX
+      const year = new Date().getFullYear();
+      invoiceNumber = `INV-${year}-${String(nextNum).padStart(4, '0')}`;
     }
+
 
     // 4. Server-side totals calculation (if items present)
     let amount = body.amount;

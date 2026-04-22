@@ -28,13 +28,24 @@ export default function InvoiceDetailPage() {
   useEffect(() => {
     fetchInvoices();
   }, [fetchInvoices]);  const invoice = useMemo(
-    () => invoices.find((inv) => 
-      String(inv._id) === String(id) || 
-      String(inv.invoiceNumber) === String(id) ||
-      String(inv.invoiceNumber) === `INV-${String(id).padStart(4, '0')}` // Handle numeric-only IDs in URL
-    ) || null,
+    () => {
+      const year = new Date().getFullYear();
+      const paddedId = String(id).padStart(4, '0');
+      
+      return invoices.find((inv) => {
+        const invNum = String(inv.invoiceNumber);
+        return (
+          String(inv._id) === String(id) || 
+          invNum === String(id) ||
+          invNum === `INV-${id}` ||
+          invNum === `INV-${year}-${id}` ||
+          invNum === `INV-${year}-${paddedId}`
+        );
+      });
+    },
     [invoices, id]
   );
+
 
   const isLoading = loading.invoices && !invoice;
   const error = !isLoading && !invoice ? (dataError || 'Invoice not found') : null;
