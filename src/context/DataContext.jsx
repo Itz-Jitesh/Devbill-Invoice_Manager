@@ -32,13 +32,10 @@ const DataProviderInner = ({ children }) => {
   const { addNotification } = useNotifications();
   const { token, isAuthReady } = useAuth();
 
-  // Helper to show toast and sync to notifications
+  // Helper to show toast and sync to notifications simultaneously
   const notify = useCallback((message, type = 'info') => {
     showToast(message, type);
-    // Add to notifications after toast animation (4s)
-    setTimeout(() => {
-      addNotification(message, type);
-    }, 4000);
+    addNotification(message, type);
   }, [showToast, addNotification]);
 
   const fetchInvoices = useCallback(async (force = false) => {

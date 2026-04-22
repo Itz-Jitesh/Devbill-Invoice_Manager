@@ -7,6 +7,7 @@ import InvoiceForm from '@/components/invoices/InvoiceForm';
 import LineItemsTable from '@/components/invoices/LineItemsTable';
 import InvoiceSummaryCard from '@/components/invoices/InvoiceSummaryCard';
 import Button from '@/components/ui/Button';
+import Icon from '@/components/ui/Icon';
 
 /**
  * New Invoice page
@@ -14,6 +15,7 @@ import Button from '@/components/ui/Button';
 export default function NewInvoicePage() {
   const router = useRouter();
   const { clients, fetchClients, addInvoice, loading } = useData();
+
 
   const [invoice, setInvoice] = useState({
     clientId: '',
@@ -87,19 +89,20 @@ export default function NewInvoicePage() {
   return (
     <div className="relative min-h-screen">
       {/* Header with Breadcrumbs */}
-      <header className="flex justify-between items-center w-full mb-12">
+      <header className="flex justify-between items-center w-full mb-12 animate-in slide-in-from-top-4 duration-1000">
         <div className="flex flex-col">
           <nav className="flex items-center gap-2 text-[10px] font-label text-on-surface-variant mb-4 tracking-widest uppercase">
             <span className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/dashboard')}>Dashboard</span>
-            <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+            <Icon name="chevron_right" size="xs" />
             <span className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/invoices')}>Invoices</span>
-            <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+            <Icon name="chevron_right" size="xs" />
             <span className="text-white">New</span>
           </nav>
-          <h2 className="text-5xl font-headline font-normal text-white tracking-tight">New Invoice</h2>
-          <div className="h-1 w-12 bg-primary/30 mt-6 rounded-full" />
+          <h2 className="text-6xl font-headline font-bold text-white tracking-tighter text-shadow-glow">New Invoice</h2>
+          <div className="h-1.5 w-12 bg-primary/40 mt-6 rounded-full" />
         </div>
       </header>
+
 
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pb-20">

@@ -116,10 +116,11 @@ const InvoiceManagementTable = ({ invoices }) => {
           ) : (
             <tr>
               <td colSpan="7" className="px-8 py-20 text-center">
-                <div className="flex flex-col items-center gap-4 opacity-40">
-                  <span className="material-symbols-outlined text-6xl">receipt_long</span>
-                  <p className="font-label uppercase tracking-[0.2em] text-xs">No invoices found</p>
+                <div className="flex flex-col items-center gap-4 opacity-30">
+                  <Icon name="receipt_long" size="xl" className="scale-150 mb-4" />
+                  <p className="font-label uppercase tracking-[0.2em] text-[10px] font-bold">No records found</p>
                 </div>
+
               </td>
             </tr>
           )}

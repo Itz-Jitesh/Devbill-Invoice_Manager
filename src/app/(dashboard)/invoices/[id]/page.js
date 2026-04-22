@@ -6,6 +6,8 @@ import { useData } from '@/context/DataContext';
 import InvoiceDetailHeader from '@/components/invoices/InvoiceDetailHeader';
 import InvoiceMainCard from '@/components/invoices/InvoiceMainCard';
 import StatusTimeline from '@/components/invoices/StatusTimeline';
+import Icon from '@/components/ui/Icon';
+
 
 /**
  * Invoice Detail page — /invoices/[id]
@@ -76,20 +78,24 @@ export default function InvoiceDetailPage() {
   // Error state
   if (error || !invoice) {
     return (
-      <div className="glass-card p-16 rounded-[40px] text-center border-error/20 max-w-2xl mx-auto mt-20">
-        <span className="material-symbols-outlined text-error text-8xl mb-8 opacity-40">error</span>
-        <h3 className="text-3xl font-headline font-bold text-white mb-4">Invoice Not Found</h3>
-        <p className="text-on-surface-variant font-body mb-10 leading-relaxed">{error}</p>
+      <div className="glass-panel p-24 rounded-[40px] text-center border-white/5 max-w-2xl mx-auto mt-20 animate-in zoom-in-95 duration-500">
+        <div className="h-24 w-24 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-error/20">
+          <Icon name="error" size="xl" className="text-error" />
+        </div>
+        <h3 className="text-4xl font-headline font-bold text-white mb-4 tracking-tighter">Invoice Not Found</h3>
+        <p className="text-on-surface-variant font-body mb-10 leading-relaxed text-lg opacity-60">{error}</p>
         <button
           onClick={() => router.push('/dashboard')}
-          className="flex items-center gap-3 px-10 py-5 bg-white/5 hover:bg-white/10 rounded-2xl text-white font-bold transition-all mx-auto tracking-widest uppercase text-xs"
+          className="group flex items-center gap-3 px-12 py-5 bg-white/5 hover:bg-white/10 rounded-2xl text-white font-bold transition-all mx-auto tracking-[0.2em] uppercase text-[10px] overflow-hidden relative"
         >
-          <span className="material-symbols-outlined">arrow_back</span>
-          Return to Dashboard
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+          <Icon name="arrow_back" size="sm" className="relative z-10" />
+          <span className="relative z-10">Return to Pulse</span>
         </button>
       </div>
     );
   }
+
 
   return (
     <div className="relative min-h-screen pb-24">

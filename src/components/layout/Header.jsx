@@ -1,14 +1,12 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
+import { useNotifications } from '@/context/NotificationContext';
 import Icon from '@/components/ui/Icon';
 
-/**
- * Header component for the Dashboard
- * @description Renders the top navigation bar with a search bar and user profile controls.
- */
-const Header = ({ onMenuClick }) => {
+const Header = ({ onMenuClick, onNotificationsClick }) => {
   const { user } = useAuth();
+  const { unreadCount } = useNotifications();
   const displayName = user?.name || user?.username || 'User';
   const userInitial = displayName.charAt(0).toUpperCase();
 
@@ -37,11 +35,20 @@ const Header = ({ onMenuClick }) => {
 
       {/* Utility and Profile Section */}
       <div className="flex items-center gap-4 lg:gap-6 ml-4 lg:ml-8">
-        <button type="button" className="hidden sm:flex text-on-surface-variant hover:text-primary transition-all duration-300 glass-card p-2.5 rounded-xl">
-          <Icon name="notifications" size="lg" />
+        <button 
+          type="button" 
+          onClick={onNotificationsClick}
+          className="relative flex text-on-surface-variant hover:text-primary transition-all duration-300 glass-card p-2.5 rounded-xl group/bell active:scale-90"
+        >
+          <Icon name="notifications" size="lg" className="group-hover/bell:animate-ring" />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-on-primary shadow-lg shadow-primary/30 animate-in zoom-in">
+              {unreadCount}
+            </span>
+          )}
         </button>
         
-        <div className="flex items-center gap-3 glass-card p-1.5 pr-4 rounded-2xl cursor-pointer hover:border-primary/20 transition-all">
+        <div className="flex items-center gap-3 glass-card p-1.5 pr-4 rounded-2xl cursor-pointer hover:border-primary/20 transition-all active:scale-95">
           <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary/30 to-primary-container/20 flex items-center justify-center text-primary font-bold text-sm shadow-inner">
             {userInitial}
           </div>
@@ -51,6 +58,7 @@ const Header = ({ onMenuClick }) => {
     </header>
   );
 };
+
 
 
 export default Header;

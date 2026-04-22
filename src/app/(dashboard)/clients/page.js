@@ -3,8 +3,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useData } from '@/context/DataContext';
 import ClientGrid from '@/components/clients/ClientGrid';
-import InsightRail from '@/components/clients/InsightRail';
+import Icon from '@/components/ui/Icon';
 import Button from '@/components/ui/Button';
+
 
 /**
  * Clients page
@@ -47,56 +48,61 @@ export default function ClientsPage() {
 
   return (
     <div className="relative min-h-screen">
-      <div className="flex">
-        <section className="flex-1 pr-80">
-          {/* Page Header */}
-          <header className="flex items-end justify-between mb-20">
-            <div>
-              <h2 className="font-headline text-5xl font-light text-on-surface tracking-tight">Clients</h2>
-              <div className="h-1 w-12 bg-indigo-400/30 mt-6 rounded-full" />
-            </div>
-            <Button
-              variant="primary"
-              className="flex items-center gap-2 px-8 py-4 uppercase tracking-widest text-xs shadow-[0_10px_30px_-10px_rgba(135,129,255,0.5)] hover:scale-105 transition-all"
-              onClick={() => setIsModalOpen(true)}
-            >
-              <span className="material-symbols-outlined text-lg">add</span>
+      <main className="max-w-[1400px] mx-auto pt-8 pb-24">
+        {/* Page Header */}
+        <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-20 animate-in slide-in-from-top-4 duration-1000">
+          <div>
+            <h2 className="font-headline text-7xl font-bold text-white tracking-tighter mb-4 leading-tight text-shadow-glow">
+              Clients
+            </h2>
+            <p className="text-on-surface-variant text-xl font-body leading-relaxed max-w-lg opacity-60">
+              Manage your commercial contacts and organization relationships.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="group relative bg-white/[0.03] hover:bg-white/[0.08] text-white border border-white/10 px-10 py-5 rounded-2xl font-label font-bold text-sm tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-2xl overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+            <span className="relative z-10 flex items-center gap-3">
+              <Icon name="person_add" size="sm" />
               Add Client
-            </Button>
-          </header>
+            </span>
+          </button>
+        </header>
 
-          {/* Data States */}
-          {loading.clients ? (
-            <div className="flex flex-col items-center justify-center py-40 animate-pulse text-on-surface-variant">
-              <span className="material-symbols-outlined text-6xl mb-4 text-primary/50">hourglass_empty</span>
-              <p className="font-body text-lg">Loading your clients...</p>
+        {/* Data States */}
+        {loading.clients ? (
+          <div className="flex flex-col items-center justify-center py-40 animate-pulse text-on-surface-variant/40">
+            <div className="h-20 w-20 rounded-full border-4 border-white/5 border-t-primary/40 animate-spin mb-8" />
+            <p className="font-label uppercase tracking-[0.3em] text-xs font-bold">Synchronizing Client Records...</p>
+          </div>
+        ) : error ? (
+          <div className="glass-panel rounded-3xl p-20 text-center border-error/10 mb-12 shadow-2xl bg-error/[0.02] backdrop-blur-3xl">
+            <div className="h-20 w-20 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-error/20">
+              <Icon name="sync_problem" size="lg" className="text-error" />
             </div>
-          ) : error ? (
-            <div className="glass-card p-12 text-center rounded-2xl border-error/20">
-              <span className="material-symbols-outlined text-error text-6xl mb-4">error</span>
-              <p className="text-on-surface font-body font-medium">{error}</p>
-              <Button variant="outline" className="mt-6" onClick={() => fetchClients(true)}>Retry</Button>
+            <h3 className="text-3xl font-headline font-bold text-white mb-3 tracking-tight">Systems Out of Sync</h3>
+            <p className="text-on-surface-variant font-body mb-10 max-w-md mx-auto opacity-70 leading-relaxed">{error}</p>
+            <Button variant="outline" className="px-10 py-5 rounded-2xl" onClick={() => fetchClients(true)}>Retry Connection</Button>
+          </div>
+        ) : filteredClients.length === 0 ? (
+          <div className="glass-panel rounded-[40px] p-24 text-center border-white/5 shadow-2xl">
+            <div className="h-24 w-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8">
+              <Icon name="search_off" size="xl" className="text-white/20" />
             </div>
-          ) : filteredClients.length === 0 ? (
-            <div className="glass-card p-12 text-center rounded-2xl border-white/10">
-              <span className="material-symbols-outlined text-on-surface-variant text-6xl mb-4">search_off</span>
-              <p className="text-on-surface font-body font-medium mb-2">No clients found</p>
-              <p className="text-on-surface-variant text-sm mb-4">Try adjusting your search terms</p>
-              {searchTerm && (
-                <Button variant="outline" onClick={() => setSearchTerm('')}>Clear Search</Button>
-              )}
-            </div>
-          ) : (
+            <p className="text-white font-headline text-2xl font-bold mb-3">No results found</p>
+            <p className="text-on-surface-variant text-sm mb-10 opacity-60">Refine your search term or add a new client.</p>
+            {searchTerm && (
+              <Button variant="outline" className="rounded-2xl" onClick={() => setSearchTerm('')}>Clear Filters</Button>
+            )}
+          </div>
+        ) : (
+          <div className="stagger-load">
             <ClientGrid clients={filteredClients} onAddClient={() => setIsModalOpen(true)} />
-          )}
-        </section>
-
-        {/* Fixed Right Insights Panel */}
-        <InsightRail 
-          activeProjects={stats.totalProjects.toString().padStart(2, '0')} 
-          pendingInvoices={stats.duePaymentsCount.toString().padStart(2, '0')} 
-        />
-      </div>
+          </div>
+        )}
+      </main>
 
       {/* Add Client Modal */}
       {isModalOpen && (
