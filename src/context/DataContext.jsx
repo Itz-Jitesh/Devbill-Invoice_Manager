@@ -116,21 +116,26 @@ const DataProviderInner = ({ children }) => {
     }
   }, [token]);
 
-  // Reset "fetched" state if token changes (e.g. login/logout)
+  // Reset "fetched" state if token becomes null (logout)
   useEffect(() => {
-    fetchedInvoicesRef.current = false;
-    fetchedClientsRef.current = false;
-    if (token) {
+    if (!token && isAuthReady) {
+      console.log('[DataContext] Token is null, clearing state');
+      fetchedInvoicesRef.current = false;
+      fetchedClientsRef.current = false;
       setInvoices([]);
       setClients([]);
     }
-  }, [token]);
+  }, [token, isAuthReady]);
 
   // Initial fetch trigger when auth is ready
   useEffect(() => {
     if (isAuthReady && token) {
-      fetchInvoices();
-      fetchClients();
+      // Only fetch if we haven't already or if we need a fresh copy
+      if (!fetchedInvoicesRef.current || !fetchedClientsRef.current) {
+        console.log('[DataContext] Auth ready with token, triggering initial fetch');
+        fetchInvoices();
+        fetchClients();
+      }
     }
   }, [isAuthReady, token, fetchInvoices, fetchClients]);
 

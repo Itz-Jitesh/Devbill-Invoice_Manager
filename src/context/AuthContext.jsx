@@ -62,7 +62,10 @@ export const AuthProvider = ({ children }) => {
       const { data: { session } } = await supabase.auth.getSession();
       await syncAuthState(session);
       
-      if (!session && window.location.pathname.startsWith('/(dashboard)')) {
+      const protectedPaths = ['/dashboard', '/clients', '/invoices', '/settings'];
+      const isProtected = protectedPaths.some(p => window.location.pathname.startsWith(p));
+      
+      if (!session && isProtected) {
         router.push('/login');
       }
     };
@@ -102,6 +105,7 @@ export const AuthProvider = ({ children }) => {
       if (error) throw error;
       
       await syncAuthState(data.session);
+      router.refresh(); // Force Next.js to pick up cookies
       return { success: true };
     } catch (error) {
       console.error('Login error:', error.message);

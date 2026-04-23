@@ -10,6 +10,27 @@ const NotificationContext = createContext();
  */
 export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([]);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem('devbill_notifications');
+    if (saved) {
+      try {
+        setNotifications(JSON.parse(saved));
+      } catch (err) {
+        console.error('Failed to parse notifications:', err);
+      }
+    }
+    setIsInitialized(true);
+  }, []);
+
+  // Persist to localStorage whenever notifications change (after initialization)
+  useEffect(() => {
+    if (isInitialized) {
+      localStorage.setItem('devbill_notifications', JSON.stringify(notifications));
+    }
+  }, [notifications, isInitialized]);
 
   // Add a new notification
   const addNotification = useCallback((message, type = 'info') => {

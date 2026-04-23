@@ -27,23 +27,39 @@ export async function verifyAuth(request) {
   }
 
   if (!token || token === 'undefined' || token === 'null') {
+    console.warn('[verifyAuth] No token found in header or cookie');
     return { error: 'Please provide a valid authentication token', status: 401 };
   }
 
   try {
     // 2. Use Supabase to verify the token and get the user
-    const { data: { user }, error } = await supabase.auth.getUser(token);
+    console.log('[verifyAuth] Verifying token (prefix):', token.substring(0, 10));
+    let { data: { user }, error } = await supabase.auth.getUser(token);
+
+    // If header token fails, try the cookie if it's different
+    if ((error || !user) && request.headers.get('cookie')) {
+      const cookieMatch = request.headers.get('cookie').match(/devbill_token=([^;]+)/);
+      const cookieToken = cookieMatch ? cookieMatch[1] : null;
+      
+      if (cookieToken && cookieToken !== token) {
+        console.log('[verifyAuth] Header token failed, trying cookie token...');
+        const cookieResult = await supabase.auth.getUser(cookieToken);
+        if (!cookieResult.error && cookieResult.data.user) {
+          user = cookieResult.data.user;
+          error = null;
+        }
+      }
+    }
 
     if (error || !user) {
+      console.error('[verifyAuth] Auth failed. Error:', error?.message || 'User not found');
       return { error: 'Token is invalid or has expired', status: 401 };
     }
 
-    // Hydrate local user ID (normalized to match MongoDB style if needed, 
-    // but here we just map id to _id for frontend compatibility if necessary)
     return { 
       user: {
         ...user,
-        _id: user.id // Maintain compatibility with frontend expecting _id
+        _id: user.id 
       } 
     };
   } catch (error) {
