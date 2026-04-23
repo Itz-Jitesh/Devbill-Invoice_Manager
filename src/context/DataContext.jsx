@@ -31,6 +31,8 @@ const DataProviderInner = ({ children }) => {
   const { showToast } = useToast();
   const { addNotification } = useNotifications();
   const { token, isAuthReady } = useAuth();
+  
+
 
   // Helper to show toast and sync to notifications simultaneously
   const notify = useCallback((message, type = 'info') => {
@@ -113,6 +115,24 @@ const DataProviderInner = ({ children }) => {
       fetchingClientsRef.current = false;
     }
   }, [token]);
+
+  // Reset "fetched" state if token changes (e.g. login/logout)
+  useEffect(() => {
+    fetchedInvoicesRef.current = false;
+    fetchedClientsRef.current = false;
+    if (token) {
+      setInvoices([]);
+      setClients([]);
+    }
+  }, [token]);
+
+  // Initial fetch trigger when auth is ready
+  useEffect(() => {
+    if (isAuthReady && token) {
+      fetchInvoices();
+      fetchClients();
+    }
+  }, [isAuthReady, token, fetchInvoices, fetchClients]);
 
   // Refresh methods for specific events (add/updated/delete)
   const refreshInvoices = useCallback(() => fetchInvoices(true), [fetchInvoices]);

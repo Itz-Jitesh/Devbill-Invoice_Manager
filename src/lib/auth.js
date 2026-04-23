@@ -26,7 +26,7 @@ export async function verifyAuth(request) {
     }
   }
 
-  if (!token) {
+  if (!token || token === 'undefined' || token === 'null') {
     return { error: 'Please provide a valid authentication token', status: 401 };
   }
 

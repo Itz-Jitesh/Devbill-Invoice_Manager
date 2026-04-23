@@ -10,6 +10,7 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthReady, setIsAuthReady] = useState(false);
   const router = useRouter();
@@ -29,6 +30,7 @@ export const AuthProvider = ({ children }) => {
         username: username || supabaseUser.email,
         email: supabaseUser.email,
       });
+      setToken(session.access_token);
 
       // Sync cookie for middleware/API
       try {
@@ -42,6 +44,7 @@ export const AuthProvider = ({ children }) => {
       }
     } else {
       setUser(null);
+      setToken(null);
       // Clear cookie
       try {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -72,10 +75,14 @@ export const AuthProvider = ({ children }) => {
       
       if (event === 'SIGNED_OUT' || !session) {
         setUser(null);
+        setToken(null);
         setLoading(false);
         router.push('/login');
       } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         await syncAuthState(session);
+        if (event === 'SIGNED_IN' && window.location.pathname === '/login') {
+          router.push('/dashboard');
+        }
       }
     });
 
@@ -145,6 +152,7 @@ export const AuthProvider = ({ children }) => {
 
   const value = {
     user,
+    token,
     loading,
     isAuthReady,
     login,
