@@ -7,6 +7,11 @@ if (!supabaseUrl || !supabaseKey) {
   console.warn('Missing Supabase URL or Anon Key in environment variables.');
 }
 
-const supabase = createClient(supabaseUrl || '', supabaseKey || '');
+const supabase = createClient(supabaseUrl || '', supabaseKey || '', {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+  },
+});
 
 export default supabase;
