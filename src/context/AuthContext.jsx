@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import supabase from '@/lib/supabase';
 
@@ -9,35 +9,40 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
+  const [session, setSession] = useState(null);
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthReady, setIsAuthReady] = useState(false);
   const router = useRouter();
 
-  // Sync state and cookies
-  const syncAuthState = async (session) => {
-    if (session) {
-      const { user: supabaseUser } = session;
-      
-      // Get additional metadata if available
-      let username = supabaseUser.user_metadata?.username;
-      
-      // Update state
+  const syncAuthState = useCallback(async (nextSession, reason = 'unknown') => {
+    console.log('[AuthContext] Syncing auth state', {
+      reason,
+      hasSession: Boolean(nextSession),
+      userId: nextSession?.user?.id ?? null,
+      email: nextSession?.user?.email ?? null,
+    });
+
+    setSession(nextSession ?? null);
+
+    if (nextSession?.user) {
+      const supabaseUser = nextSession.user;
+      const username = supabaseUser.user_metadata?.username;
+
       setUser({
         id: supabaseUser.id,
         name: username || supabaseUser.email,
         username: username || supabaseUser.email,
         email: supabaseUser.email,
       });
-      setToken(session.access_token);
+      setToken(nextSession.access_token);
 
-      // Sync cookie for middleware/API
       try {
         await fetch('/api/auth/sync', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: session.access_token }),
+          body: JSON.stringify({ token: nextSession.access_token }),
         });
       } catch (err) {
         console.error('Failed to sync auth cookie:', err);
@@ -45,7 +50,6 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUser(null);
       setToken(null);
-      // Clear cookie
       try {
         await fetch('/api/auth/logout', { method: 'POST' });
       } catch (err) {
@@ -54,45 +58,56 @@ export const AuthProvider = ({ children }) => {
     }
     setLoading(false);
     setIsAuthReady(true);
-  };
+  }, []);
 
   useEffect(() => {
-    // 1. Initial session fetch
     const getInitialSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      await syncAuthState(session);
-      
+      const {
+        data: { session: currentSession },
+        error,
+      } = await supabase.auth.getSession();
+
+      console.log('[AuthContext] Initial session fetch', {
+        hasSession: Boolean(currentSession),
+        userId: currentSession?.user?.id ?? null,
+        error: error?.message ?? null,
+      });
+
+      await syncAuthState(currentSession, 'initial-session');
+
       const protectedPaths = ['/dashboard', '/clients', '/invoices', '/settings'];
       const isProtected = protectedPaths.some(p => window.location.pathname.startsWith(p));
       
-      if (!session && isProtected) {
-        router.push('/login');
+      if (!currentSession && isProtected) {
+        router.replace('/login');
       }
     };
 
     getInitialSession();
 
-    // 2. Auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state change event:', event);
-      
-      if (event === 'SIGNED_OUT' || !session) {
-        setUser(null);
-        setToken(null);
-        setLoading(false);
-        router.push('/login');
-      } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        await syncAuthState(session);
-        if (event === 'SIGNED_IN' && window.location.pathname === '/login') {
-          router.push('/dashboard');
-        }
+      console.log('[AuthContext] Auth state change event', {
+        event,
+        hasSession: Boolean(session),
+        userId: session?.user?.id ?? null,
+      });
+
+      await syncAuthState(session, event);
+
+      if (!session && window.location.pathname !== '/login') {
+        router.replace('/login');
+        return;
+      }
+
+      if (session && window.location.pathname === '/login') {
+        router.replace('/dashboard');
       }
     });
 
     return () => {
       subscription.unsubscribe();
     };
-  }, [router]);
+  }, [router, syncAuthState]);
 
   const login = async (email, password) => {
     setLoading(true);
@@ -102,10 +117,14 @@ export const AuthProvider = ({ children }) => {
         password,
       });
 
+      console.log('[AuthContext] Login response', {
+        userId: data?.session?.user?.id ?? null,
+        error: error?.message ?? null,
+      });
+
       if (error) throw error;
       
-      await syncAuthState(data.session);
-      router.refresh(); // Force Next.js to pick up cookies
+      await syncAuthState(data.session, 'login');
       return { success: true };
     } catch (error) {
       console.error('Login error:', error.message);
@@ -124,6 +143,12 @@ export const AuthProvider = ({ children }) => {
         options: {
           data: { username: name }
         }
+      });
+
+      console.log('[AuthContext] Signup response', {
+        userId: data?.user?.id ?? null,
+        hasSession: Boolean(data?.session),
+        error: error?.message ?? null,
       });
 
       if (error) throw error;
@@ -145,8 +170,10 @@ export const AuthProvider = ({ children }) => {
     try {
       await supabase.auth.signOut();
       await fetch('/api/auth/logout', { method: 'POST' });
+      setSession(null);
       setUser(null);
-      router.push('/login');
+      setToken(null);
+      router.replace('/login');
     } catch (err) {
       console.error('Logout error:', err);
     } finally {
@@ -155,6 +182,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = {
+    session,
     user,
     token,
     loading,

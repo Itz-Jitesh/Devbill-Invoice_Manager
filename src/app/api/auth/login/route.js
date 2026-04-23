@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 /**
  * @desc    Authenticate user & get token
@@ -10,6 +10,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
     console.log('Login attempt for:', body.email);
+    const supabase = createServerSupabaseClient();
 
     const { email, password } = body;
 

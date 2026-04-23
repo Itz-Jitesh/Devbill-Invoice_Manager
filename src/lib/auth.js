@@ -1,4 +1,20 @@
-import supabase from './supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
+
+export function getRequestAccessToken(request) {
+  const authHeader = request.headers.get('authorization');
+
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    return authHeader.split(' ')[1];
+  }
+
+  const cookie = request.headers.get('cookie');
+  if (!cookie) {
+    return null;
+  }
+
+  const match = cookie.match(/devbill_token=([^;]+)/);
+  return match ? match[1] : null;
+}
 
 /**
  * Verify authentication using Supabase.
@@ -7,24 +23,7 @@ import supabase from './supabase';
  * @returns {{ user: object } | { error: string, status: number }}
  */
 export async function verifyAuth(request) {
-  // 1. Get session/user from Supabase
-  // The backend can use headers or cookies. 
-  // Since we set 'devbill_token' in cookies, we could use that, 
-  // but supabase.auth.getUser() is the standard way if the client is configured.
-  
-  const authHeader = request.headers.get('authorization');
-  let token = null;
-
-  if (authHeader && authHeader.startsWith('Bearer ')) {
-    token = authHeader.split(' ')[1];
-  } else {
-    // Check cookies as fallback (handled by Next.js headers)
-    const cookie = request.headers.get('cookie');
-    if (cookie) {
-      const match = cookie.match(/devbill_token=([^;]+)/);
-      if (match) token = match[1];
-    }
-  }
+  const token = getRequestAccessToken(request);
 
   if (!token || token === 'undefined' || token === 'null') {
     console.warn('[verifyAuth] No token found in header or cookie');
@@ -32,35 +31,28 @@ export async function verifyAuth(request) {
   }
 
   try {
-    // 2. Use Supabase to verify the token and get the user
-    console.log('[verifyAuth] Verifying token (prefix):', token.substring(0, 10));
-    let { data: { user }, error } = await supabase.auth.getUser(token);
+    const supabase = createServerSupabaseClient(token);
+    console.log('[verifyAuth] Verifying session', { tokenPrefix: token.slice(0, 10) });
 
-    // If header token fails, try the cookie if it's different
-    if ((error || !user) && request.headers.get('cookie')) {
-      const cookieMatch = request.headers.get('cookie').match(/devbill_token=([^;]+)/);
-      const cookieToken = cookieMatch ? cookieMatch[1] : null;
-      
-      if (cookieToken && cookieToken !== token) {
-        console.log('[verifyAuth] Header token failed, trying cookie token...');
-        const cookieResult = await supabase.auth.getUser(cookieToken);
-        if (!cookieResult.error && cookieResult.data.user) {
-          user = cookieResult.data.user;
-          error = null;
-        }
-      }
-    }
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser(token);
 
     if (error || !user) {
       console.error('[verifyAuth] Auth failed. Error:', error?.message || 'User not found');
       return { error: 'Token is invalid or has expired', status: 401 };
     }
 
-    return { 
+    console.log('[verifyAuth] Authenticated user', { userId: user.id, email: user.email });
+
+    return {
+      supabase,
+      token,
       user: {
         ...user,
-        _id: user.id 
-      } 
+        _id: user.id,
+      },
     };
   } catch (error) {
     console.error('Auth verification error:', error.message);

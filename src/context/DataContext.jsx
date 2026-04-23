@@ -30,7 +30,7 @@ const DataProviderInner = ({ children }) => {
   // Toast and notifications
   const { showToast } = useToast();
   const { addNotification } = useNotifications();
-  const { token, isAuthReady } = useAuth();
+  const { token, isAuthReady, user } = useAuth();
   
 
 
@@ -41,29 +41,36 @@ const DataProviderInner = ({ children }) => {
   }, [showToast, addNotification]);
 
   const fetchInvoices = useCallback(async (force = false) => {
-    // Wait for auth to be initialized
     if (!isAuthReady) return;
     
-    // If auth is ready but no token, we can't fetch (logged out/session expired)
     if (!token) {
+      console.log('[DataContext] Skipping invoice fetch because there is no session token');
       fetchedInvoicesRef.current = false;
       return;
     }
 
-    // Prevent concurrent fetches using ref
     if (fetchingInvoicesRef.current && !force) return;
     if (fetchedInvoicesRef.current && !force) return;
 
     fetchingInvoicesRef.current = true;
     setLoading(prev => ({ ...prev, invoices: true }));
     setError(null);
+
     try {
       const res = await fetch('/api/invoices', {
+        cache: 'no-store',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       const data = await res.json();
+
+      console.log('[DataContext] Invoice fetch response', {
+        status: res.status,
+        count: Array.isArray(data) ? data.length : null,
+        error: !res.ok ? data.error : null,
+      });
+
       if (res.ok) {
         setInvoices(data);
         fetchedInvoicesRef.current = true;
@@ -71,37 +78,45 @@ const DataProviderInner = ({ children }) => {
         throw new Error(data.error || 'Failed to fetch invoices');
       }
     } catch (err) {
+      console.error('[DataContext] Invoice fetch failed', err);
       setError(err.message);
     } finally {
       setLoading(prev => ({ ...prev, invoices: false }));
       fetchingInvoicesRef.current = false;
     }
-  }, [token]);
+  }, [isAuthReady, token]);
 
   const fetchClients = useCallback(async (force = false) => {
-    // Wait for auth to be initialized
     if (!isAuthReady) return;
     
-    // If auth is ready but no token, we can't fetch
     if (!token) {
+      console.log('[DataContext] Skipping client fetch because there is no session token');
       fetchedClientsRef.current = false;
       return;
     }
 
-    // Prevent concurrent fetches using ref
     if (fetchingClientsRef.current && !force) return;
     if (fetchedClientsRef.current && !force) return;
 
     fetchingClientsRef.current = true;
     setLoading(prev => ({ ...prev, clients: true }));
     setError(null);
+
     try {
       const res = await fetch('/api/clients', {
+        cache: 'no-store',
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
       const data = await res.json();
+
+      console.log('[DataContext] Client fetch response', {
+        status: res.status,
+        count: Array.isArray(data) ? data.length : null,
+        error: !res.ok ? data.error : null,
+      });
+
       if (res.ok) {
         setClients(data);
         fetchedClientsRef.current = true;
@@ -109,28 +124,35 @@ const DataProviderInner = ({ children }) => {
         throw new Error(data.error || 'Failed to fetch clients');
       }
     } catch (err) {
+      console.error('[DataContext] Client fetch failed', err);
       setError(err.message);
     } finally {
       setLoading(prev => ({ ...prev, clients: false }));
       fetchingClientsRef.current = false;
     }
-  }, [token]);
+  }, [isAuthReady, token]);
 
-  // Reset "fetched" state if token becomes null (logout)
   useEffect(() => {
-    if (!token && isAuthReady) {
-      console.log('[DataContext] Token is null, clearing state');
+    if (!isAuthReady) {
+      return;
+    }
+
+    if (!token || !user?.id) {
+      console.log('[DataContext] Clearing cached data because auth session is unavailable');
       fetchedInvoicesRef.current = false;
       fetchedClientsRef.current = false;
       setInvoices([]);
       setClients([]);
+      return;
     }
-  }, [token, isAuthReady]);
 
-  // Initial fetch trigger when auth is ready
+    console.log('[DataContext] Authenticated user ready for data fetch', {
+      userId: user.id,
+    });
+  }, [token, isAuthReady, user?.id]);
+
   useEffect(() => {
     if (isAuthReady && token) {
-      // Only fetch if we haven't already or if we need a fresh copy
       if (!fetchedInvoicesRef.current || !fetchedClientsRef.current) {
         console.log('[DataContext] Auth ready with token, triggering initial fetch');
         fetchInvoices();
@@ -149,6 +171,12 @@ const DataProviderInner = ({ children }) => {
 
   const addInvoice = useCallback(async (invoiceData) => {
     try {
+      console.log('[DataContext] Creating invoice', {
+        clientId: invoiceData.clientId,
+        title: invoiceData.title,
+        amount: invoiceData.amount,
+      });
+
       const res = await fetch('/api/invoices', {
         method: 'POST',
         headers: { 
@@ -158,18 +186,22 @@ const DataProviderInner = ({ children }) => {
         body: JSON.stringify(invoiceData),
       });
       const newInvoice = await res.json();
+
+      console.log('[DataContext] Create invoice response', {
+        status: res.status,
+        invoiceId: newInvoice?._id ?? null,
+        error: !res.ok ? newInvoice.error : null,
+      });
+
       if (!res.ok) throw new Error(newInvoice.error || 'Failed to add invoice');
 
-      // Update local state: add to the beginning of the list
       setInvoices(prev => [newInvoice, ...prev]);
       fetchedInvoicesRef.current = true;
-
-      // Show toast + notification
       notify('Invoice created successfully', 'success');
 
       return { success: true, data: newInvoice };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Create invoice failed', err);
       notify('Failed to create invoice', 'error');
       return { success: false, error: err.message };
     }
@@ -177,7 +209,6 @@ const DataProviderInner = ({ children }) => {
 
   const updateInvoice = useCallback(async (id, updatedData) => {
     try {
-      // Ensure id is a string
       const idString = String(id);
       const res = await fetch(`/api/invoices/${idString}`, {
         method: 'PUT',
@@ -188,20 +219,24 @@ const DataProviderInner = ({ children }) => {
         body: JSON.stringify(updatedData),
       });
       const updatedInvoice = await res.json();
+
+      console.log('[DataContext] Update invoice response', {
+        status: res.status,
+        invoiceId: updatedInvoice?._id ?? idString,
+        error: !res.ok ? updatedInvoice.error : null,
+      });
+
       if (!res.ok) throw new Error(updatedInvoice.error || 'Failed to update invoice');
 
-      // Update local state - convert both to strings for comparison
       setInvoices(prev => prev.map(inv => {
-        const invId = inv._id ? String(inv._id) : null;
+        const invId = inv._id ? String(inv._id) : String(inv.id);
         return invId === idString ? updatedInvoice : inv;
       }));
-
-      // Show toast + notification
       notify('Invoice updated successfully', 'success');
 
       return { success: true, data: updatedInvoice };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Update invoice failed', err);
       notify('Failed to update invoice', 'error');
       return { success: false, error: err.message };
     }
@@ -209,7 +244,6 @@ const DataProviderInner = ({ children }) => {
 
   const deleteInvoice = useCallback(async (id) => {
     try {
-      // Ensure id is a string
       const idString = String(id);
       const res = await fetch(`/api/invoices/${idString}`, { 
         method: 'DELETE',
@@ -218,20 +252,31 @@ const DataProviderInner = ({ children }) => {
         }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete invoice');
 
-      // Update local state - convert both to strings for comparison
+      console.log('[DataContext] Delete invoice response', {
+        status: res.status,
+        invoiceId: idString,
+        error: !res.ok ? (data.error || data.message || null) : null,
+      });
+
+      if (!res.ok) {
+        const message = data.error || data.message || 'Failed to delete invoice';
+        const isAlreadyGone = res.status === 404 && /not found|already/i.test(message);
+
+        if (!isAlreadyGone) {
+          throw new Error(message);
+        }
+      }
+
       setInvoices(prev => prev.filter(inv => {
-        const invId = inv._id ? String(inv._id) : null;
+        const invId = inv._id ? String(inv._id) : String(inv.id);
         return invId !== idString;
       }));
-
-      // Show toast + notification
       notify('Invoice deleted successfully', 'success');
 
       return { success: true };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Delete invoice failed', err);
       notify('Failed to delete invoice', 'error');
       return { success: false, error: err.message };
     }
@@ -249,20 +294,24 @@ const DataProviderInner = ({ children }) => {
         body: JSON.stringify({ status: 'paid', paidAt: new Date().toISOString() }),
       });
       const updatedInvoice = await res.json();
+
+      console.log('[DataContext] Mark invoice paid response', {
+        status: res.status,
+        invoiceId: updatedInvoice?._id ?? idString,
+        error: !res.ok ? updatedInvoice.error : null,
+      });
+
       if (!res.ok) throw new Error(updatedInvoice.error || 'Failed to mark invoice as paid');
 
-      // Update local state
       setInvoices(prev => prev.map(inv => {
-        const invId = inv._id ? String(inv._id) : null;
+        const invId = inv._id ? String(inv._id) : String(inv.id);
         return invId === idString ? updatedInvoice : inv;
       }));
-
-      // Show toast + notification
       notify('Invoice marked as paid', 'success');
 
       return { success: true, data: updatedInvoice };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Mark invoice paid failed', err);
       notify('Failed to mark invoice as paid', 'error');
       return { success: false, error: err.message };
     }
@@ -270,6 +319,11 @@ const DataProviderInner = ({ children }) => {
 
   const addClient = useCallback(async (clientData) => {
     try {
+      console.log('[DataContext] Creating client', {
+        name: clientData.name,
+        email: clientData.email ?? null,
+      });
+
       const res = await fetch('/api/clients', {
         method: 'POST',
         headers: { 
@@ -279,18 +333,22 @@ const DataProviderInner = ({ children }) => {
         body: JSON.stringify(clientData),
       });
       const newClient = await res.json();
+
+      console.log('[DataContext] Create client response', {
+        status: res.status,
+        clientId: newClient?._id ?? null,
+        error: !res.ok ? newClient.error : null,
+      });
+
       if (!res.ok) throw new Error(newClient.error || 'Failed to add client');
 
-      // Update local state
       setClients(prev => [newClient, ...prev]);
       fetchedClientsRef.current = true;
-
-      // Show toast + notification
       notify('Client created successfully', 'success');
 
       return { success: true, data: newClient };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Create client failed', err);
       notify('Failed to create client', 'error');
       return { success: false, error: err.message };
     }
@@ -298,7 +356,6 @@ const DataProviderInner = ({ children }) => {
 
   const updateClient = useCallback(async (id, updatedData) => {
     try {
-      // Ensure id is a string
       const idString = String(id);
       const res = await fetch(`/api/clients/${idString}`, {
         method: 'PUT',
@@ -309,20 +366,24 @@ const DataProviderInner = ({ children }) => {
         body: JSON.stringify(updatedData),
       });
       const updatedClient = await res.json();
+
+      console.log('[DataContext] Update client response', {
+        status: res.status,
+        clientId: updatedClient?._id ?? idString,
+        error: !res.ok ? updatedClient.error : null,
+      });
+
       if (!res.ok) throw new Error(updatedClient.error || 'Failed to update client');
 
-      // Update local state - convert both to strings for comparison
       setClients(prev => prev.map(client => {
-        const clientId = client._id ? String(client._id) : null;
-        return clientId === idString ? updatedClient : client;
+        const clientRecordId = client._id ? String(client._id) : String(client.id);
+        return clientRecordId === idString ? updatedClient : client;
       }));
-
-      // Show toast + notification
       notify('Client updated successfully', 'success');
 
       return { success: true, data: updatedClient };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Update client failed', err);
       notify('Failed to update client', 'error');
       return { success: false, error: err.message };
     }
@@ -330,7 +391,6 @@ const DataProviderInner = ({ children }) => {
 
   const deleteClient = useCallback(async (id) => {
     try {
-      // Ensure id is a string
       const idString = String(id);
       const res = await fetch(`/api/clients/${idString}`, { 
         method: 'DELETE',
@@ -339,20 +399,31 @@ const DataProviderInner = ({ children }) => {
         }
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to delete client');
 
-      // Update local state - convert both to strings for comparison
+      console.log('[DataContext] Delete client response', {
+        status: res.status,
+        clientId: idString,
+        error: !res.ok ? (data.error || data.message || null) : null,
+      });
+
+      if (!res.ok) {
+        const message = data.error || data.message || 'Failed to delete client';
+        const isAlreadyGone = res.status === 404 && /not found|already/i.test(message);
+
+        if (!isAlreadyGone) {
+          throw new Error(message);
+        }
+      }
+
       setClients(prev => prev.filter(client => {
-        const clientId = client._id ? String(client._id) : null;
-        return clientId !== idString;
+        const clientRecordId = client._id ? String(client._id) : String(client.id);
+        return clientRecordId !== idString;
       }));
-
-      // Show toast + notification
       notify('Client deleted successfully', 'success');
 
       return { success: true };
     } catch (err) {
-      setError(err.message);
+      console.error('[DataContext] Delete client failed', err);
       notify('Failed to delete client', 'error');
       return { success: false, error: err.message };
     }

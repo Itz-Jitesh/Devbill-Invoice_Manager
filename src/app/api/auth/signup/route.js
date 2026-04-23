@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 /**
  * @desc    Register a new user
@@ -10,6 +10,7 @@ export async function POST(request) {
   try {
     const body = await request.json();
     console.log('Signup payload received:', body);
+    const supabase = createServerSupabaseClient();
 
     const { username, email, password } = body;
 

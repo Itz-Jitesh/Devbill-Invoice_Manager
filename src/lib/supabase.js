@@ -1,17 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
+import { supabaseAnonKey, supabaseUrl } from '@/lib/supabase-config';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+let browserSupabase;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.warn('Missing Supabase URL or Anon Key in environment variables.');
+export function getBrowserSupabaseClient() {
+  if (!browserSupabase) {
+    browserSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    });
+  }
+
+  return browserSupabase;
 }
 
-const supabase = createClient(supabaseUrl || '', supabaseKey || '', {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-  },
-});
+const supabase = getBrowserSupabaseClient();
 
 export default supabase;

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
+import {
+  normalizeInvoiceRecord,
+  parseInvoiceNumberInput,
+} from '@/lib/data-normalizers';
 
 /**
  * GET /api/invoices
@@ -13,41 +16,26 @@ export async function GET(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { data: invoices, error } = await supabase
+    const { data: invoices, error } = await auth.supabase
       .from('invoices')
-      .select('*, clientId:clients(name, email, company)')
+      .select('*, client:clients(id, name, email, company)')
       .eq('user_id', auth.user._id)
-      .neq('status', 'cancelled')
+      .or('status.is.null,status.neq.cancelled')
       .order('date', { ascending: false });
+
+    console.log('[api/invoices][GET] Fetch response', {
+      userId: auth.user._id,
+      count: invoices?.length ?? 0,
+      error: error?.message ?? null,
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    // Normalize for frontend
-    const currentYear = new Date().getFullYear();
-    const normalizedInvoices = invoices.map(inv => {
-      let displayInvoiceNumber = inv.invoice_number;
-      
-      // If it's just a number (like "1", "2", 3), professionalize it
-      if (displayInvoiceNumber && !isNaN(displayInvoiceNumber)) {
-        const invYear = inv.date ? new Date(inv.date).getFullYear() : currentYear;
-        displayInvoiceNumber = `INV-${invYear}-${String(displayInvoiceNumber).padStart(4, '0')}`;
-      }
-
-      return {
-        ...inv,
-        _id: inv.id,
-        userId: inv.user_id,
-        invoiceNumber: displayInvoiceNumber || `INV-${currentYear}-0000`,
-        dueDate: inv.due_date,
-        clientId: inv.clientId ? { ...inv.clientId, _id: inv.client_id } : null
-      };
-    });
-
-
-    return NextResponse.json(normalizedInvoices);
+    return NextResponse.json(invoices.map(normalizeInvoiceRecord));
   } catch (error) {
+    console.error('[api/invoices][GET] Failed', error);
     return NextResponse.json(
       { error: 'Failed to fetch invoices: ' + error.message },
       { status: 500 }
@@ -69,15 +57,20 @@ export async function POST(request) {
     const body = await request.json();
     
     // 1. Validate required fields
-    const requiredFields = ['title', 'amount', 'clientId'];
-    for (const field of requiredFields) {
-      if (!body[field]) {
-        return NextResponse.json({ error: `${field} is required` }, { status: 400 });
-      }
+    if (!body.title) {
+      return NextResponse.json({ error: 'title is required' }, { status: 400 });
+    }
+
+    if (body.amount === undefined || body.amount === null) {
+      return NextResponse.json({ error: 'amount is required' }, { status: 400 });
+    }
+
+    if (!body.clientId) {
+      return NextResponse.json({ error: 'clientId is required' }, { status: 400 });
     }
 
     // 2. Ownership Check: Verify client belongs to this user
-    const { data: client, error: clientError } = await supabase
+    const { data: client, error: clientError } = await auth.supabase
       .from('clients')
       .select('id')
       .eq('id', body.clientId)
@@ -92,47 +85,59 @@ export async function POST(request) {
     }
 
     // 3. Generate professional alphanumeric invoice number
-    let invoiceNumber = body.invoiceNumber;
-    if (!invoiceNumber) {
-      const { data: nextNum, error: rpcError } = await supabase
+    let invoiceSequence = parseInvoiceNumberInput(body.invoiceNumber);
+    if (body.invoiceNumber && invoiceSequence === null) {
+      return NextResponse.json(
+        { error: 'Invoice number must be numeric or in INV-YYYY-XXXX format' },
+        { status: 400 }
+      );
+    }
+
+    if (invoiceSequence === null) {
+      const { data: nextNum, error: rpcError } = await auth.supabase
         .rpc('increment_invoice_number', { target_user_id: auth.user._id });
 
       if (rpcError) {
         throw new Error('Failed to generate invoice number: ' + rpcError.message);
       }
-      // Formatting to professional style: INV-YYYY-XXXX
-      const year = new Date().getFullYear();
-      invoiceNumber = `INV-${year}-${String(nextNum).padStart(4, '0')}`;
+
+      invoiceSequence = nextNum;
     }
 
 
-    // 4. Server-side totals calculation (if items present)
     let amount = body.amount;
     if (body.items && Array.isArray(body.items)) {
-      amount = body.items.reduce((sum, item) => sum + (Number(item.quantity) * Number(item.unitPrice)), 0);
+      amount = body.items.reduce(
+        (sum, item) => sum + (Number(item.quantity) * Number(item.unitPrice ?? item.rate ?? 0)),
+        0
+      );
     }
 
-    // 5. Create invoice
     const invoiceData = {
       title: body.title,
-      amount: amount,
+      amount: Number(amount),
       status: body.status || 'sent',
       client_id: body.clientId,
-      date: body.date || new Date(),
-      due_date: body.dueDate,
-      invoice_number: invoiceNumber,
-      user_id: auth.user._id
+      date: body.date || new Date().toISOString(),
+      due_date: body.dueDate || null,
+      invoice_number: invoiceSequence,
+      user_id: auth.user._id,
     };
 
-
-    const { data: invoice, error: insertError } = await supabase
+    const { data: invoice, error: insertError } = await auth.supabase
       .from('invoices')
       .insert([invoiceData])
-      .select('*, clientId:clients(name, email, company)')
+      .select('*, client:clients(id, name, email, company)')
       .single();
 
+    console.log('[api/invoices][POST] Insert response', {
+      userId: auth.user._id,
+      invoiceId: invoice?.id ?? null,
+      invoiceNumber: invoice?.invoice_number ?? invoiceSequence,
+      error: insertError?.message ?? null,
+    });
+
     if (insertError) {
-      // Handle unique constraint violation
       if (insertError.code === '23505') {
         return NextResponse.json(
           { error: 'Invoice number already exists for this user' },
@@ -142,18 +147,9 @@ export async function POST(request) {
       throw new Error(insertError.message);
     }
 
-    // Normalize for frontend
-    const normalizedInvoice = {
-      ...invoice,
-      _id: invoice.id,
-      userId: invoice.user_id,
-      invoiceNumber: invoice.invoice_number,
-      dueDate: invoice.due_date,
-      clientId: { ...invoice.clientId, _id: invoice.client_id }
-    };
-
-    return NextResponse.json(normalizedInvoice, { status: 201 });
+    return NextResponse.json(normalizeInvoiceRecord(invoice), { status: 201 });
   } catch (error) {
+    console.error('[api/invoices][POST] Failed', error);
     return NextResponse.json(
       { error: 'Failed to create invoice: ' + error.message },
       { status: 500 }

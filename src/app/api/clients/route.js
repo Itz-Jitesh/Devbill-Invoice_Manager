@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
+import { normalizeClientRecord } from '@/lib/data-normalizers';
 
 /**
  * GET /api/clients
@@ -13,26 +13,26 @@ export async function GET(request) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { data: clients, error } = await supabase
+    const { data: clients, error } = await auth.supabase
       .from('clients')
       .select('*')
       .eq('user_id', auth.user._id)
-      .eq('is_active', true)
+      .or('is_active.is.null,is_active.eq.true')
       .order('created_at', { ascending: false });
+
+    console.log('[api/clients][GET] Fetch response', {
+      userId: auth.user._id,
+      count: clients?.length ?? 0,
+      error: error?.message ?? null,
+    });
 
     if (error) {
       throw new Error(error.message);
     }
 
-    // Map `id` to `_id` and `user_id` to `userId` for frontend compatibility if needed
-    const normalizedClients = clients.map(client => ({
-      ...client,
-      _id: client.id,
-      userId: client.user_id
-    }));
-
-    return NextResponse.json(normalizedClients);
+    return NextResponse.json(clients.map(normalizeClientRecord));
   } catch (error) {
+    console.error('[api/clients][GET] Failed', error);
     return NextResponse.json(
       { error: 'Failed to fetch clients: ' + error.message },
       { status: 500 }
@@ -63,31 +63,31 @@ export async function POST(request) {
     // Prepare client data for Supabase
     const clientData = {
       name: body.name,
-      email: body.email,
-      company: body.company,
+      email: body.email || null,
+      company: body.company || null,
       user_id: auth.user._id,
-      is_active: true
+      is_active: true,
     };
 
-    const { data: client, error } = await supabase
+    const { data: client, error } = await auth.supabase
       .from('clients')
       .insert([clientData])
       .select()
       .single();
 
+    console.log('[api/clients][POST] Insert response', {
+      userId: auth.user._id,
+      clientId: client?.id ?? null,
+      error: error?.message ?? null,
+    });
+
     if (error) {
       throw new Error(error.message);
     }
 
-    // Normalize for frontend
-    const normalizedClient = {
-      ...client,
-      _id: client.id,
-      userId: client.user_id
-    };
-
-    return NextResponse.json(normalizedClient, { status: 201 });
+    return NextResponse.json(normalizeClientRecord(client), { status: 201 });
   } catch (error) {
+    console.error('[api/clients][POST] Failed', error);
     return NextResponse.json(
       { error: 'Failed to create client: ' + error.message },
       { status: 500 }

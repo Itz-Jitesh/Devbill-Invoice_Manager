@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import supabase from '@/lib/supabase';
 import { verifyAuth } from '@/lib/auth';
+import { normalizeClientRecord } from '@/lib/data-normalizers';
 
 /**
  * GET /api/clients/[id]
@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
 
     const { id } = await params;
     
-    const { data: client, error } = await supabase
+    const { data: client, error } = await auth.supabase
       .from('clients')
       .select('*')
       .eq('id', id)
@@ -26,14 +26,15 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: 'Client not found or access denied' }, { status: 404 });
     }
 
-    const normalizedClient = {
-      ...client,
-      _id: client.id,
-      userId: client.user_id
-    };
+    console.log('[api/clients/:id][GET] Fetch response', {
+      userId: auth.user._id,
+      clientId: client?.id ?? id,
+      error: error?.message ?? null,
+    });
 
-    return NextResponse.json(normalizedClient);
+    return NextResponse.json(normalizeClientRecord(client));
   } catch (error) {
+    console.error('[api/clients/:id][GET] Failed', error);
     return NextResponse.json(
       { error: 'Failed to fetch client: ' + error.message },
       { status: 500 }
@@ -55,9 +56,15 @@ export async function PUT(request, { params }) {
     const { id } = await params;
     const body = await request.json();
 
-    const { data: updatedClient, error } = await supabase
+    const updates = {};
+
+    if (body.name !== undefined) updates.name = body.name;
+    if (body.email !== undefined) updates.email = body.email || null;
+    if (body.company !== undefined) updates.company = body.company || null;
+
+    const { data: updatedClient, error } = await auth.supabase
       .from('clients')
-      .update(body)
+      .update(updates)
       .eq('id', id)
       .eq('user_id', auth.user._id)
       .select()
@@ -67,14 +74,15 @@ export async function PUT(request, { params }) {
       return NextResponse.json({ error: 'Client not found or access denied' }, { status: 404 });
     }
 
-    const normalizedClient = {
-      ...updatedClient,
-      _id: updatedClient.id,
-      userId: updatedClient.user_id
-    };
+    console.log('[api/clients/:id][PUT] Update response', {
+      userId: auth.user._id,
+      clientId: updatedClient?.id ?? id,
+      error: error?.message ?? null,
+    });
 
-    return NextResponse.json(normalizedClient);
+    return NextResponse.json(normalizeClientRecord(updatedClient));
   } catch (error) {
+    console.error('[api/clients/:id][PUT] Failed', error);
     return NextResponse.json(
       { error: 'Failed to update client: ' + error.message },
       { status: 500 }
@@ -94,22 +102,51 @@ export async function DELETE(request, { params }) {
     }
 
     const { id } = await params;
+    const { data: existingClient, error: existingClientError } = await auth.supabase
+      .from('clients')
+      .select('id, is_active')
+      .eq('id', id)
+      .eq('user_id', auth.user._id)
+      .maybeSingle();
 
-    const { data: deletedClient, error } = await supabase
+    console.log('[api/clients/:id][DELETE] Existing client lookup', {
+      userId: auth.user._id,
+      clientId: id,
+      isActive: existingClient?.is_active ?? null,
+      error: existingClientError?.message ?? null,
+    });
+
+    if (existingClientError) {
+      throw new Error(existingClientError.message);
+    }
+
+    if (!existingClient) {
+      return NextResponse.json({ error: 'Client not found' }, { status: 404 });
+    }
+
+    if (existingClient.is_active === false) {
+      return NextResponse.json({ message: 'Client already deleted', id });
+    }
+
+    const { error } = await auth.supabase
       .from('clients')
       .update({ is_active: false })
       .eq('id', id)
-      .eq('user_id', auth.user._id)
-      .eq('is_active', true)
-      .select()
-      .single();
+      .eq('user_id', auth.user._id);
 
-    if (error || !deletedClient) {
-      return NextResponse.json({ error: 'Client not found or already deleted' }, { status: 404 });
+    console.log('[api/clients/:id][DELETE] Update response', {
+      userId: auth.user._id,
+      clientId: id,
+      error: error?.message ?? null,
+    });
+
+    if (error) {
+      return NextResponse.json({ error: 'Failed to delete client' }, { status: 500 });
     }
 
     return NextResponse.json({ message: 'Client deactivated successfully', id });
   } catch (error) {
+    console.error('[api/clients/:id][DELETE] Failed', error);
     return NextResponse.json(
       { error: 'Failed to delete client: ' + error.message },
       { status: 500 }
