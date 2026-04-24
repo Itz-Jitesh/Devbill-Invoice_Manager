@@ -31,9 +31,9 @@ const ClientGrid = ({ clients, onAddClient }) => {
       <button
         type="button"
         onClick={onAddClient}
-        className="group flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-white/10 p-8 hover:border-primary/40 transition-all duration-300 bg-transparent hover:bg-primary/[0.02]"
+        className="group flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed border-[var(--color-surface-border)] p-8 hover:border-primary/40 transition-all duration-300 bg-transparent hover:bg-primary/[0.02]"
       >
-        <div className="w-12 h-12 rounded-full glass-card flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+        <div className="w-12 h-12 rounded-full surface-card flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
           <span className="material-symbols-outlined text-primary">add</span>
         </div>
         <p className="font-label text-sm font-medium text-on-surface-variant/60 group-hover:text-primary">

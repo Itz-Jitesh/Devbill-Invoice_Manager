@@ -6,13 +6,13 @@ export const metadata = {
 
 export default function ForgotPasswordPage() {
   return (
-    <div className="w-full max-w-[460px] glass-card rounded-[20px] p-10 md:p-14 z-10 shadow-2xl">
-      <div className="text-center space-y-6">
+    <div className="w-full max-w-[460px] surface-card rounded-[20px] p-10 md:p-14 z-10 shadow-2xl">
+      <div className="text-[var(--color-on-surface-variant)]enter space-y-6">
         <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary/10 text-primary">
           <span className="material-symbols-outlined">lock_reset</span>
         </div>
         <div>
-          <h1 className="font-headline font-light text-4xl text-on-surface tracking-tight mb-3">
+          <h1 className="font-headline font-light text-[var(--color-on-surface-variant)]xl text-on-surface tracking-tight mb-3">
             Password Reset
           </h1>
           <p className="font-body text-on-surface-variant text-sm leading-relaxed">

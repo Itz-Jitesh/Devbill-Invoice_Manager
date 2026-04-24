@@ -13,9 +13,9 @@ const ToastContainer = () => {
   const getToastStyles = (type) => {
     switch (type) {
       case 'success':
-        return 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400';
+        return 'border-emerald-500/30 bg-emerald-500/10 text-[var(--color-on-surface)]merald-400';
       case 'error':
-        return 'border-error/30 bg-error/10 text-error';
+        return 'border-error/30 bg-error/10 text-[var(--color-on-surface)]rror';
       case 'warning':
         return 'border-tertiary/30 bg-tertiary/10 text-tertiary';
       default:
@@ -41,7 +41,7 @@ const ToastContainer = () => {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className={`pointer-events-auto glass-panel rounded-xl px-5 py-4 border shadow-2xl
+          className={`pointer-events-auto surface-card rounded-xl px-5 py-4 border shadow-2xl
             flex items-center gap-3 min-w-[320px] max-w-[400px]
             ${getToastStyles(toast.type)}`}
         >

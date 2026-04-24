@@ -18,7 +18,7 @@ const Input = ({
       {label && (
         <label
           htmlFor={name}
-          className={`block text-xs font-label font-medium text-on-surface-variant/70 uppercase tracking-widest mb-2 px-1 ${labelClassName}`}
+          className={`block text-xs font-semibold text-[var(--color-on-surface)] uppercase tracking-wider mb-2 px-1 ${labelClassName}`}
         >
           {label}
         </label>
@@ -32,27 +32,24 @@ const Input = ({
           value={value}
           onChange={onChange}
           className={`
-            w-full bg-surface-container-high/40
-            border-b border-outline-variant
-            focus:border-primary focus:ring-0 focus:outline-none
-            text-on-surface placeholder:text-outline/50
-            transition-all px-4 py-4 rounded-xl input-glow
+            w-full bg-[var(--color-surface)] border border-[var(--color-surface-border)]
+            focus:border-[var(--color-primary)] focus:ring-1 focus:ring-[var(--color-primary)] focus:outline-none
+            text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)]
+            transition-all px-4 py-3 rounded-md
             font-body text-sm
             ${rightElement ? 'pr-12' : ''}
-            ${error ? 'border-error' : ''}
+            ${error ? 'border-[var(--color-error)] focus:border-[var(--color-error)] focus:ring-[var(--color-error)]' : ''}
             ${inputClassName}
           `}
           {...props}
         />
-        {/* Animated underline */}
-        <div className="absolute bottom-0 left-0 w-0 h-[2px] bg-primary transition-all duration-500 group-focus-within:w-full rounded-full" />
-
+        
         {/* Right element (e.g., icon, button) */}
         {rightElement && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2">{rightElement}</div>
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]">{rightElement}</div>
         )}
       </div>
-      {error && <p className="mt-2 text-xs text-error font-label">{error}</p>}
+      {error && <p className="mt-2 text-xs text-[var(--color-error)] font-medium">{error}</p>}
     </div>
   );
 };

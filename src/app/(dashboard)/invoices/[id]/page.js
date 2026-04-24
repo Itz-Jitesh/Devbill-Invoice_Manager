@@ -82,7 +82,7 @@ export default function InvoiceDetailPage() {
   // Loading state
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] animate-pulse">
+      <div className="flex flex-col items-center justify-center min-h-[60vh] ">
         <div className="w-20 h-20 rounded-full border-4 border-primary/20 border-t-primary animate-spin mb-8" />
         <p className="text-on-surface-variant font-body text-lg tracking-wide uppercase text-xs font-bold font-label">
           Retrieving Invoice Data...
@@ -94,15 +94,15 @@ export default function InvoiceDetailPage() {
   // Error state
   if (error || !invoice) {
     return (
-      <div className="glass-panel p-24 rounded-[40px] text-center border-white/5 max-w-2xl mx-auto mt-20 animate-in zoom-in-95 duration-500">
+      <div className="surface-card p-24 rounded-[40px] text-[var(--color-on-surface-variant)]enter border-[var(--color-surface-border)] max-w-2xl mx-auto mt-20 ">
         <div className="h-24 w-24 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-error/20">
-          <Icon name="error" size="xl" className="text-error" />
+          <Icon name="error" size="xl" className="text-[var(--color-on-surface)]rror" />
         </div>
-        <h3 className="text-4xl font-headline font-bold text-white mb-4 tracking-tighter">Invoice Not Found</h3>
+        <h3 className="text-[var(--color-on-surface-variant)]xl font-headline font-bold text-[var(--color-on-surface)] mb-4 tracking-tighter">Invoice Not Found</h3>
         <p className="text-on-surface-variant font-body mb-10 leading-relaxed text-lg opacity-60">{error}</p>
         <button
           onClick={() => router.push('/dashboard')}
-          className="group flex items-center gap-3 px-12 py-5 bg-white/5 hover:bg-white/10 rounded-2xl text-white font-bold transition-all mx-auto tracking-[0.2em] uppercase text-[10px] overflow-hidden relative"
+          className="group flex items-center gap-3 px-12 py-5 bg-[var(--color-surface)] hover:bg-white/10 rounded-2xl text-[var(--color-on-surface)] font-bold transition-all mx-auto tracking-[0.2em] uppercase text-[10px] overflow-hidden relative"
         >
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
           <Icon name="arrow_back" size="sm" className="relative z-10" />
@@ -133,8 +133,8 @@ export default function InvoiceDetailPage() {
       {/* Edit Modal */}
 
       {isEditModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-          <div className="glass-panel rounded-2xl p-8 max-w-lg w-full border border-white/10">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 ">
+          <div className="surface-card rounded-2xl p-8 max-w-lg w-full border border-[var(--color-surface-border)]">
             <h3 className="font-headline text-2xl font-bold text-on-surface mb-6">Edit Invoice</h3>
             <form onSubmit={handleSaveEdit} className="space-y-6">
               <div className="space-y-2">
@@ -145,7 +145,7 @@ export default function InvoiceDetailPage() {
                   type="text"
                   value={editForm.title}
                   onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
-                  className="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
+                  className="w-full bg-surface-container-high border border-[var(--color-surface-border)] rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
                   required
                 />
               </div>
@@ -157,7 +157,7 @@ export default function InvoiceDetailPage() {
                   type="number"
                   value={editForm.amount}
                   onChange={(e) => setEditForm({ ...editForm, amount: e.target.value })}
-                  className="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
+                  className="w-full bg-surface-container-high border border-[var(--color-surface-border)] rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
                   required
                   min="0"
                   step="0.01"
@@ -170,7 +170,7 @@ export default function InvoiceDetailPage() {
                 <select
                   value={editForm.status}
                   onChange={(e) => setEditForm({ ...editForm, status: e.target.value })}
-                  className="w-full bg-surface-container-high border border-white/10 rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
+                  className="w-full bg-surface-container-high border border-[var(--color-surface-border)] rounded-xl px-4 py-3 text-on-surface focus:outline-none focus:border-primary/40 transition-all"
                 >
                   <option value="sent">Sent</option>
                   <option value="pending">Pending</option>
@@ -182,7 +182,7 @@ export default function InvoiceDetailPage() {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="flex-1 px-6 py-3 rounded-xl border border-white/10 text-on-surface-variant hover:bg-white/5 transition-all font-medium"
+                  className="flex-1 px-6 py-3 rounded-xl border border-[var(--color-surface-border)] text-on-surface-variant hover:bg-[var(--color-surface)] transition-all font-medium"
                 >
                   Cancel
                 </button>
@@ -199,8 +199,8 @@ export default function InvoiceDetailPage() {
       )}
 
       {/* Background Glows */}
-      <div className="fixed top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-primary/5 blur-[120px] pointer-events-none -z-10 animate-pulse" />
-      <div className="fixed bottom-[10%] left-[10%] w-[30vw] h-[30vw] rounded-full bg-secondary-container/5 blur-[100px] pointer-events-none -z-10" />
+      <div className="fixed top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-primary/5  pointer-events-none -z-10 " />
+      <div className="fixed bottom-[10%] left-[10%] w-[30vw] h-[30vw] rounded-full bg-secondary-container/5  pointer-events-none -z-10" />
     </div>
   );
 }

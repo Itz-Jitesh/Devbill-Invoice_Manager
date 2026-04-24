@@ -11,33 +11,23 @@ const DashboardLayout = ({ children }) => {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-on-surface font-body overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--color-background)] text-[var(--color-on-surface)] font-body flex">
       <CommandPalette />
 
-      {/* Sidebar Navigation */}
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
-
-      {/* Notification History Panel */}
       <NotificationPanel isOpen={isNotificationsOpen} onClose={() => setIsNotificationsOpen(false)} />
 
-      {/* Main Content Area */}
-      <main className="lg:pl-64 transition-all duration-500 min-h-screen">
+      <main className="flex-1 lg:ml-64 flex flex-col min-h-screen transition-all duration-300 w-full overflow-hidden">
         <Header 
           onMenuClick={() => setIsSidebarOpen(true)} 
           onNotificationsClick={() => setIsNotificationsOpen(true)}
         />
-
-        {/* Page-specific content */}
-        <div className="px-6 lg:px-12 pb-20 stagger-load">
+        <div className="flex-1 px-6 lg:px-8 py-8 overflow-y-auto">
           {children}
         </div>
-
-        {/* Decorative background element */}
-        <div className="fixed bottom-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full -z-10 pointer-events-none translate-x-1/2 translate-y-1/2" />
       </main>
     </div>
   );
 };
-
 
 export default DashboardLayout;

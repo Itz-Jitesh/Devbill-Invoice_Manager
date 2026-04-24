@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useData } from '@/context/DataContext';
 import { useToast } from '@/context/ToastContext';
 import { useAuth } from '@/context/AuthContext';
@@ -10,9 +11,6 @@ import InvoiceTable from '@/components/dashboard/InvoiceTable';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 
-/**
- * Dashboard page
- */
 export default function DashboardPage() {
   const router = useRouter();
   const { invoices, clients, stats, loading, fetchInvoices } = useData();
@@ -32,7 +30,6 @@ export default function DashboardPage() {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  // Show welcome toast after login redirect
   useEffect(() => {
     const shouldShowToast = sessionStorage.getItem('showWelcomeToast');
     if (shouldShowToast) {
@@ -42,13 +39,12 @@ export default function DashboardPage() {
   }, [showToast]);
 
   const dashboardStats = [
-    { title: 'Total Earned', value: `$${stats.totalRevenue.toLocaleString()}`, trendValue: 'Income', trendColor: 'text-[#34D399]', bgColor: 'bg-[#34D399]/10' },
-    { title: 'Invoices Sent', value: stats.totalProjects.toString(), trendValue: 'Total', trendColor: 'text-primary', bgColor: 'bg-primary/10' },
-    { title: 'Pending Amount', value: `$${stats.pendingAmount.toLocaleString()}`, trendValue: 'Due', trendColor: 'text-[#FBBF24]', bgColor: 'bg-[#FBBF24]/10' },
-    { title: 'Due Payments', value: stats.duePaymentsCount.toString(), trendValue: 'Action needed', trendColor: 'text-teal-400', bgColor: 'bg-teal-400/10' },
+    { title: 'Total Earned', value: `$${stats.totalRevenue.toLocaleString()}`, trendValue: 'Income', trendColor: 'text-[var(--color-success)]', bgColor: 'bg-[var(--color-success)]/10' },
+    { title: 'Invoices Sent', value: stats.totalProjects.toString(), trendValue: 'Total', trendColor: 'text-[var(--color-accent)]', bgColor: 'bg-[var(--color-accent)]/10' },
+    { title: 'Pending Amount', value: `$${stats.pendingAmount.toLocaleString()}`, trendValue: 'Due', trendColor: 'text-[var(--color-warning)]', bgColor: 'bg-[var(--color-warning)]/10' },
+    { title: 'Due Payments', value: stats.duePaymentsCount.toString(), trendValue: 'Action needed', trendColor: 'text-[var(--color-error)]', bgColor: 'bg-[var(--color-error)]/10' },
   ];
 
-  // Global Search: Filter both invoices and clients
   const searchResults = useMemo(() => {
     if (!searchTerm.trim()) return { recentInvoices: invoices.slice(0, 5), matchedClients: [] };
     
@@ -68,107 +64,120 @@ export default function DashboardPage() {
     return { recentInvoices: matchedInvoices, matchedClients };
   }, [invoices, clients, searchTerm]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
-    <div className="space-y-16 py-8">
+    <motion.div 
+      initial="hidden" 
+      animate="visible" 
+      variants={containerVariants}
+      className="space-y-12 max-w-7xl mx-auto"
+    >
       {/* Greeting */}
-      <section className="animate-in fade-in slide-in-from-top-4 duration-1000">
-        <h2 className="text-7xl font-headline font-bold tracking-tighter text-on-surface mb-4 leading-tight text-shadow-glow">
+      <motion.section variants={itemVariants}>
+        <h2 className="text-[var(--color-on-surface-variant)]xl font-headline font-semibold text-[var(--color-on-surface)] tracking-tight mb-2">
           {greeting}, {displayName}
         </h2>
-
-        <p className="text-on-surface-variant text-xl max-w-2xl font-body leading-relaxed opacity-60">
+        <p className="text-[var(--color-on-surface-variant)] text-lg max-w-2xl">
           {loading.invoices ? (
             'Loading your business performance...'
           ) : (
             `You have ${stats.duePaymentsCount} pending invoice${stats.duePaymentsCount !== 1 ? 's' : ''} that need attention.`
           )}
         </p>
-      </section>
+      </motion.section>
 
       {/* Stats Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 stagger-load">
+      <motion.section variants={itemVariants} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {dashboardStats.map((stat, index) => (
           <StatCard key={index} {...stat} />
         ))}
-      </section>
+      </motion.section>
 
       {/* Search & Results Section */}
-      <section className="space-y-10">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6 mb-12">
+      <motion.section variants={itemVariants} className="space-y-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6">
           <div>
-            <h3 className="text-3xl font-headline font-bold text-on-surface tracking-tight">
+            <h3 className="text-2xl font-headline font-semibold text-[var(--color-on-surface)] tracking-tight">
               {searchTerm ? 'Search Results' : 'Recent Activity'}
             </h3>
-            <p className="text-on-surface-variant text-sm mt-2 font-body opacity-60">
-              {searchTerm ? `Found ${searchResults.recentInvoices.length} invoices and ${searchResults.matchedClients.length} clients.` : 'Manage your latest billing activities and statuses.'}
+            <p className="text-[var(--color-on-surface-variant)] text-sm mt-1">
+              {searchTerm ? `Found ${searchResults.recentInvoices.length} invoices and ${searchResults.matchedClients.length} clients.` : 'Manage your latest billing activities.'}
             </p>
           </div>
           <div className="flex items-center gap-4">
-            {/* Search Input */}
-            <div className="glass-panel px-5 py-3 rounded-2xl flex items-center min-w-[320px] focus-within:border-primary/50 transition-all border border-white/10 group bg-white/[0.02]">
-              <Icon name="search" size="lg" className="text-primary/40 group-focus-within:text-primary transition-colors mr-3" />
+            <div className="relative">
+              <Icon name="search" size="md" className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-on-surface-variant)]" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search invoices or clients..."
-                className="bg-transparent border-none focus:ring-0 text-sm font-body w-full placeholder:text-on-surface-variant/30 text-white"
+                className="input-base pl-9 min-w-[280px]"
               />
             </div>
             <Button
               variant="primary"
-              className="flex items-center gap-3 px-8 shadow-2xl"
               onClick={() => router.push('/invoices/new')}
             >
-              <Icon name="add" size="sm" />
+              <Icon name="add" size="sm" className="mr-2" />
               Create
             </Button>
           </div>
         </div>
 
-        {/* Matched Clients (Only if searching) */}
+        {/* Matched Clients */}
         {searchTerm && searchResults.matchedClients.length > 0 && (
-          <div className="animate-in fade-in slide-in-from-left-4 duration-500 mb-12">
-            <h4 className="text-[10px] font-label uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-6 opacity-40">Matching Clients</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div variants={itemVariants}>
+            <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface-variant)] mb-4">Matching Clients</h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {searchResults.matchedClients.map(client => (
                 <div 
                   key={client._id} 
                   onClick={() => router.push('/clients')}
-                  className="glass-panel p-6 rounded-2xl border-white/5 hover:border-primary/20 transition-all cursor-pointer group"
+                  className="surface-card p-4 rounded-xl cursor-pointer"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-xs uppercase group-hover:scale-110 transition-transform">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md bg-[var(--color-surface-hover)] flex items-center justify-center text-[var(--color-on-surface)] font-medium text-sm border border-[var(--color-surface-border)]">
                       {client.name?.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-white font-body font-bold text-sm tracking-tight">{client.name}</p>
-                      <p className="text-[10px] text-on-surface-variant uppercase tracking-widest font-label opacity-40">{client.company || 'Private Entity'}</p>
+                      <p className="text-[var(--color-on-surface)] font-medium text-sm">{client.name}</p>
+                      <p className="text-xs text-[var(--color-on-surface-variant)]">{client.company || 'Private Entity'}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
         
-        <div className="stagger-load">
-          <h4 className="text-[10px] font-label uppercase tracking-[0.3em] text-on-surface-variant font-bold mb-6 opacity-40">
+        <motion.div variants={itemVariants}>
+          <h4 className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface-variant)] mb-4">
             {searchTerm ? 'Matching Invoices' : 'Recent Invoices'}
           </h4>
           <InvoiceTable invoices={searchResults.recentInvoices} />
-        </div>
+        </motion.div>
 
         {searchTerm && searchResults.recentInvoices.length === 0 && searchResults.matchedClients.length === 0 && (
-          <div className="text-center py-24 glass-panel rounded-[40px] border-white/5 shadow-inner bg-white/[0.01]">
-            <Icon name="search_off" size="xl" className="text-on-surface-variant/10 mb-6 scale-150" />
-            <p className="text-on-surface-variant font-headline text-2xl font-bold mb-2">No global matches found</p>
-            <p className="text-on-surface-variant/40 font-body text-sm">Refine your term or browse all records manually.</p>
-          </div>
+          <motion.div variants={itemVariants} className="text-[var(--color-on-surface-variant)]enter py-16 surface-card rounded-xl">
+            <Icon name="search_off" size="xl" className="text-[var(--color-on-surface-variant)] mb-4" />
+            <p className="text-[var(--color-on-surface)] text-lg font-medium mb-1">No matches found</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm">Try adjusting your search term.</p>
+          </motion.div>
         )}
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }
-
-

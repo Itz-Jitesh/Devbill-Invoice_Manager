@@ -64,10 +64,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full max-w-[460px] glass-card rounded-[20px] p-10 md:p-14 z-10 shadow-2xl">
+    <div className="w-full max-w-[460px] surface-card rounded-[20px] p-10 md:p-14 z-10 shadow-2xl">
       {/* App Logo */}
       <div className="flex justify-center mb-12">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[var(--color-surface)] border border-[var(--color-surface-border)]">
           <svg className="w-5 h-5 text-primary" fill="currentColor" viewBox="0 0 24 24">
             <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
           </svg>
@@ -76,8 +76,8 @@ export default function LoginPage() {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-10">
-        <h1 className="font-headline font-light text-4xl md:text-5xl text-on-surface tracking-tight mb-4">
+      <div className="text-[var(--color-on-surface-variant)]enter mb-10">
+        <h1 className="font-headline font-light text-[var(--color-on-surface-variant)]xl md:text-5xl text-on-surface tracking-tight mb-4">
           Welcome back
         </h1>
         <p className="font-body text-on-surface-variant font-medium text-sm md:text-base">
@@ -87,7 +87,7 @@ export default function LoginPage() {
 
       {/* Server Error */}
       {serverError && (
-        <div className="mb-6 p-4 rounded-xl bg-error/10 border border-error/20 text-error text-sm font-body text-center">
+        <div className="mb-6 p-4 rounded-xl bg-error/10 border border-error/20 text-[var(--color-on-surface)]rror text-sm font-body text-[var(--color-on-surface-variant)]enter">
           {serverError}
         </div>
       )}
@@ -137,7 +137,7 @@ export default function LoginPage() {
       </form>
 
       {/* Footer */}
-      <div className="mt-10 text-center">
+      <div className="mt-10 text-[var(--color-on-surface-variant)]enter">
         <p className="font-body text-sm text-on-surface-variant">
           Don&apos;t have an account?{' '}
           <Link href="/signup" className="text-primary hover:text-on-surface transition-colors font-semibold">

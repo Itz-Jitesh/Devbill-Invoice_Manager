@@ -35,13 +35,13 @@ export default function ClientDetailPage() {
   }, [clientInvoices]);
 
   if (loading.clients && !client) {
-    return <div className="p-8 text-white">Loading client details...</div>;
+    return <div className="p-8 text-[var(--color-on-surface)]">Loading client details...</div>;
   }
 
   if (!client) {
     return (
-      <div className="p-8 text-center">
-        <h2 className="text-2xl text-white">Client not found</h2>
+      <div className="p-8 text-[var(--color-on-surface-variant)]enter">
+        <h2 className="text-2xl text-[var(--color-on-surface)]">Client not found</h2>
         <Button className="mt-4" onClick={() => router.push('/clients')}>Back to Clients</Button>
       </div>
     );
@@ -64,13 +64,13 @@ export default function ClientDetailPage() {
         </div>
         
         <div className="flex gap-4">
-          <div className="glass-card px-6 py-4 rounded-2xl text-center">
+          <div className="surface-card px-6 py-4 rounded-2xl text-[var(--color-on-surface-variant)]enter">
             <p className="text-[10px] uppercase tracking-widest text-on-surface-variant/60 mb-1">Total Billed</p>
-            <p className="text-2xl font-headline text-white">${(stats.paid + stats.pending).toLocaleString()}</p>
+            <p className="text-2xl font-headline text-[var(--color-on-surface)]">${(stats.paid + stats.pending).toLocaleString()}</p>
           </div>
-          <div className="glass-card px-6 py-4 rounded-2xl text-center border-primary/20 bg-primary/5">
+          <div className="surface-card px-6 py-4 rounded-2xl text-[var(--color-on-surface-variant)]enter border-primary/20 bg-primary/5">
             <p className="text-[10px] uppercase tracking-widest text-primary mb-1">Outstanding</p>
-            <p className="text-2xl font-headline text-white">${stats.pending.toLocaleString()}</p>
+            <p className="text-2xl font-headline text-[var(--color-on-surface)]">${stats.pending.toLocaleString()}</p>
           </div>
         </div>
       </section>
@@ -81,7 +81,7 @@ export default function ClientDetailPage() {
         {clientInvoices.length > 0 ? (
           <InvoiceManagementTable invoices={clientInvoices} />
         ) : (
-          <div className="glass-card p-20 text-center rounded-2xl border-white/5">
+          <div className="surface-card p-20 text-[var(--color-on-surface-variant)]enter rounded-2xl border-[var(--color-surface-border)]">
             <span className="material-symbols-outlined text-6xl opacity-20 mb-4">receipt_long</span>
             <p className="text-on-surface-variant">No invoices found for this client.</p>
           </div>

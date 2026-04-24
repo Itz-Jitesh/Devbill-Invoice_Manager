@@ -1,4 +1,5 @@
-// No "use client" needed — pure presentational component, no hooks or events
+import { motion } from 'framer-motion';
+
 const Button = ({
   children,
   type = 'button',
@@ -9,29 +10,25 @@ const Button = ({
   onClick,
   ...props
 }) => {
-  const baseStyles =
-    'font-label font-semibold tracking-wider rounded-xl transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase text-[10px] sm:text-xs premium-button';
+  const baseStyles = 'font-label rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium flex items-center justify-center';
 
   const variants = {
-    primary:
-      'bg-gradient-to-br from-primary to-primary-container text-on-primary-container shadow-[0_8px_20px_rgba(196,192,255,0.15)] hover:shadow-primary/30',
-    secondary:
-      'glass-card text-on-surface hover:bg-white/10',
-    outline:
-      'border border-white/10 text-on-surface hover:bg-white/5 hover:border-white/20',
-    ghost: 
-      'text-on-surface-variant hover:text-on-surface hover:bg-white/5',
+    primary: 'btn-primary',
+    secondary: 'btn-secondary',
+    outline: 'border border-[var(--color-surface-border)] text-[var(--color-on-surface)] hover:bg-[var(--color-surface-hover)]',
+    ghost: 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-hover)]',
   };
 
   const sizes = {
-    sm: 'px-6 py-2.5',
-    md: 'px-8 py-3.5',
-    lg: 'px-10 py-4.5',
-    full: 'w-full py-4',
+    sm: 'px-4 py-2 text-xs',
+    md: 'px-5 py-2.5',
+    lg: 'px-6 py-3',
+    full: 'w-full py-2.5',
   };
 
   return (
-    <button
+    <motion.button
+      whileTap={disabled ? {} : { scale: 0.98 }}
       type={type}
       onClick={onClick}
       disabled={disabled}
@@ -39,7 +36,7 @@ const Button = ({
       {...props}
     >
       {children}
-    </button>
+    </motion.button>
   );
 };
 

@@ -6,11 +6,6 @@ import ClientGrid from '@/components/clients/ClientGrid';
 import Icon from '@/components/ui/Icon';
 import Button from '@/components/ui/Button';
 
-
-/**
- * Clients page
- * "use client" required: useData, useEffect.
- */
 export default function ClientsPage() {
   const { clients, stats, loading, error, fetchClients, fetchInvoices, addClient } = useData();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +17,6 @@ export default function ClientsPage() {
     fetchInvoices();
   }, [fetchClients, fetchInvoices]);
 
-  // Filter clients by name, email, or company (case-insensitive)
   const filteredClients = useMemo(() => {
     if (!searchTerm.trim()) return clients;
     const term = searchTerm.toLowerCase();
@@ -50,70 +44,66 @@ export default function ClientsPage() {
     <div className="relative min-h-screen">
       <main className="max-w-[1400px] mx-auto pt-8 pb-24">
         {/* Page Header */}
-        <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-20 animate-in slide-in-from-top-4 duration-1000">
+        <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-12">
           <div>
-            <h2 className="font-headline text-7xl font-bold text-white tracking-tighter mb-4 leading-tight text-shadow-glow">
+            <h2 className="font-headline text-[var(--color-on-surface-variant)]xl font-bold text-[var(--color-on-surface)] tracking-tight mb-2">
               Clients
             </h2>
-            <p className="text-on-surface-variant text-xl font-body leading-relaxed max-w-lg opacity-60">
+            <p className="text-[var(--color-on-surface-variant)] text-lg font-body max-w-lg">
               Manage your commercial contacts and organization relationships.
             </p>
           </div>
-          <button
+          <Button
             onClick={() => setIsModalOpen(true)}
-            className="group relative bg-white/[0.03] hover:bg-white/[0.08] text-white border border-white/10 px-10 py-5 rounded-2xl font-label font-bold text-sm tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-2xl overflow-hidden"
+            variant="primary"
+            className="flex items-center gap-2"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-            <span className="relative z-10 flex items-center gap-3">
-              <Icon name="person_add" size="sm" />
-              Add Client
-            </span>
-          </button>
+            <Icon name="person_add" size="sm" />
+            Add Client
+          </Button>
         </header>
 
         {/* Data States */}
         {loading.clients ? (
-          <div className="flex flex-col items-center justify-center py-40 animate-pulse text-on-surface-variant/40">
-            <div className="h-20 w-20 rounded-full border-4 border-white/5 border-t-primary/40 animate-spin mb-8" />
-            <p className="font-label uppercase tracking-[0.3em] text-xs font-bold">Synchronizing Client Records...</p>
+          <div className="flex flex-col items-center justify-center py-40 text-[var(--color-on-surface-variant)]">
+            <div className="h-12 w-12 rounded-full border-4 border-[var(--color-surface-border)] border-t-[var(--color-primary)] animate-spin mb-6" />
+            <p className="font-semibold text-sm">Synchronizing Client Records...</p>
           </div>
         ) : error ? (
-          <div className="glass-panel rounded-3xl p-20 text-center border-error/10 mb-12 shadow-2xl bg-error/[0.02] backdrop-blur-3xl">
-            <div className="h-20 w-20 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-error/20">
-              <Icon name="sync_problem" size="lg" className="text-error" />
+          <div className="surface-card rounded-xl p-12 text-[var(--color-on-surface-variant)]enter border-[var(--color-error)] mb-12 bg-[var(--color-error)]/5">
+            <div className="h-16 w-16 bg-[var(--color-error)]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[var(--color-error)]/20">
+              <Icon name="sync_problem" size="lg" className="text-[var(--color-error)]" />
             </div>
-            <h3 className="text-3xl font-headline font-bold text-white mb-3 tracking-tight">Systems Out of Sync</h3>
-            <p className="text-on-surface-variant font-body mb-10 max-w-md mx-auto opacity-70 leading-relaxed">{error}</p>
-            <Button variant="outline" className="px-10 py-5 rounded-2xl" onClick={() => fetchClients(true)}>Retry Connection</Button>
+            <h3 className="text-xl font-headline font-bold text-[var(--color-on-surface)] mb-2">Systems Out of Sync</h3>
+            <p className="text-[var(--color-on-surface-variant)] font-body mb-8 max-w-md mx-auto">{error}</p>
+            <Button variant="outline" onClick={() => fetchClients(true)}>Retry Connection</Button>
           </div>
         ) : filteredClients.length === 0 ? (
-          <div className="glass-panel rounded-[40px] p-24 text-center border-white/5 shadow-2xl">
-            <div className="h-24 w-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8">
-              <Icon name="search_off" size="xl" className="text-white/20" />
+          <div className="surface-card rounded-xl p-16 text-[var(--color-on-surface-variant)]enter">
+            <div className="h-16 w-16 bg-[var(--color-surface-hover)] rounded-full flex items-center justify-center mx-auto mb-6">
+              <Icon name="search_off" size="xl" className="text-[var(--color-on-surface-variant)]" />
             </div>
-            <p className="text-white font-headline text-2xl font-bold mb-3">No results found</p>
-            <p className="text-on-surface-variant text-sm mb-10 opacity-60">Refine your search term or add a new client.</p>
+            <p className="text-[var(--color-on-surface)] font-headline text-xl font-bold mb-2">No results found</p>
+            <p className="text-[var(--color-on-surface-variant)] text-sm mb-8">Refine your search term or add a new client.</p>
             {searchTerm && (
-              <Button variant="outline" className="rounded-2xl" onClick={() => setSearchTerm('')}>Clear Filters</Button>
+              <Button variant="outline" onClick={() => setSearchTerm('')}>Clear Filters</Button>
             )}
           </div>
         ) : (
-          <div className="stagger-load">
-            <ClientGrid clients={filteredClients} onAddClient={() => setIsModalOpen(true)} />
-          </div>
+          <ClientGrid clients={filteredClients} onAddClient={() => setIsModalOpen(true)} />
         )}
       </main>
 
       {/* Add Client Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg glass-card rounded-3xl p-10 border-white/10 shadow-2xl animate-in zoom-in-95 duration-200">
-            <h3 className="text-3xl font-headline text-white mb-2">New Client</h3>
-            <p className="text-on-surface-variant mb-8">Add a new commercial contact to your manager.</p>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50">
+          <div className="w-full max-w-lg surface-card rounded-xl p-8 border border-[var(--color-surface-border)] shadow-xl">
+            <h3 className="text-2xl font-headline text-[var(--color-on-surface)] mb-1 font-bold">New Client</h3>
+            <p className="text-[var(--color-on-surface-variant)] mb-6 text-sm">Add a new commercial contact to your manager.</p>
             
-            <form onSubmit={handleAddClient} className="space-y-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-label uppercase tracking-widest text-on-surface-variant/60 ml-1">Full Name</label>
+            <form onSubmit={handleAddClient} className="space-y-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Full Name</label>
                 <input 
                   autoFocus
                   required
@@ -121,35 +111,35 @@ export default function ClientsPage() {
                   value={newClient.name}
                   onChange={(e) => setNewClient({...newClient, name: e.target.value})}
                   placeholder="e.g. Lukas Sterling"
-                  className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-body"
+                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-label uppercase tracking-widest text-on-surface-variant/60 ml-1">Email Address</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Email Address</label>
                 <input 
                   type="email" 
                   value={newClient.email}
                   onChange={(e) => setNewClient({...newClient, email: e.target.value})}
                   placeholder="name@company.com"
-                  className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-body"
+                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
                 />
               </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-xs font-label uppercase tracking-widest text-on-surface-variant/60 ml-1">Company / Organization</label>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-xs font-semibold uppercase tracking-wider text-[var(--color-on-surface)]">Company / Organization</label>
                 <input 
                   type="text" 
                   value={newClient.company}
                   onChange={(e) => setNewClient({...newClient, company: e.target.value})}
                   placeholder="e.g. Nova Horizon Systems"
-                  className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-white placeholder:text-white/20 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-body"
+                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
                 />
               </div>
 
-              <div className="flex items-center gap-4 pt-4">
+              <div className="flex items-center gap-3 pt-4">
                 <Button 
                   type="button" 
                   variant="secondary" 
-                  className="flex-1 py-4"
+                  className="flex-1"
                   onClick={() => setIsModalOpen(false)}
                 >
                   Cancel
@@ -157,7 +147,7 @@ export default function ClientsPage() {
                 <Button 
                   type="submit" 
                   variant="primary" 
-                  className="flex-1 py-4 shadow-lg shadow-primary/20"
+                  className="flex-1"
                 >
                   Create Client
                 </Button>
@@ -168,22 +158,21 @@ export default function ClientsPage() {
       )}
 
       {/* Floating Search Bar */}
-      <div className="fixed bottom-10 left-[calc(50%+144px)] -translate-x-1/2 w-full max-w-xl px-4 z-50 animate-in slide-in-from-bottom-8 duration-1000">
-        <div className="glass-panel rounded-3xl flex items-center p-3 shadow-[0_30px_60px_rgba(0,0,0,0.5)] backdrop-blur-3xl border-white/10 focus-within:border-primary/40 transition-all">
-          <Icon name="search" size="lg" className="ml-4 text-primary/60" />
+      <div className="fixed bottom-8 left-[calc(50%+128px)] -translate-x-1/2 w-full max-w-xl px-4 z-50">
+        <div className="surface-card rounded-full flex items-center p-2 shadow-lg border border-[var(--color-surface-border)] focus-within:border-[var(--color-primary)] transition-all">
+          <Icon name="search" size="md" className="ml-3 text-[var(--color-on-surface-variant)]" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search by name, email, or company..."
-            className="bg-transparent border-none focus:ring-0 text-md font-body w-full px-4 placeholder:text-on-surface-variant/30 text-white"
+            className="bg-transparent border-none focus:ring-0 text-sm font-body w-full px-3 placeholder:text-[var(--color-on-surface-variant)] text-[var(--color-on-surface)] focus:outline-none"
           />
-          <kbd className="hidden md:flex items-center gap-1 bg-white/5 px-2.5 py-1.5 rounded-xl text-[10px] font-label text-on-surface-variant/40 mr-2 border border-white/5">
-            <span className="text-[14px]">⌘</span>K
+          <kbd className="hidden md:flex items-center gap-1 bg-[var(--color-surface-hover)] px-2 py-1 rounded-md text-xs font-medium text-[var(--color-on-surface-variant)] mr-1">
+            <span>⌘</span>K
           </kbd>
         </div>
       </div>
-
     </div>
   );
 }

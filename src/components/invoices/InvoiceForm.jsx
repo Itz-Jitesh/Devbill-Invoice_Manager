@@ -12,7 +12,7 @@ const InvoiceForm = ({ invoice, setInvoice, clients }) => {
   };
 
   return (
-    <section className="glass-card p-10 rounded-xl">
+    <section className="surface-card p-10 rounded-xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Client Selection */}
         <div className="flex flex-col gap-2">
@@ -24,7 +24,7 @@ const InvoiceForm = ({ invoice, setInvoice, clients }) => {
               name="clientId"
               value={invoice.clientId}
               onChange={handleChange}
-              className="w-full bg-surface-container-highest/40 border border-white/10 rounded-xl px-4 py-4 text-on-surface font-body appearance-none focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all cursor-pointer"
+              className="w-full bg-surface-container-highest/40 border border-[var(--color-surface-border)] rounded-xl px-4 py-4 text-on-surface font-body appearance-none focus:ring-2 focus:ring-primary/40 focus:outline-none transition-all cursor-pointer"
             >
               <option value="" disabled>Select a client</option>
               {clients.map((client) => (

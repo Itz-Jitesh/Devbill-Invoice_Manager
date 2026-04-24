@@ -4,80 +4,73 @@ import { useRouter } from 'next/navigation';
 import Icon from '@/components/ui/Icon';
 import FormattedDate from '@/components/ui/FormattedDate';
 
-/**
- * InvoiceTable component (Dashboard)
- * @description Displays a list of recent invoices in a stylized table format.
- * "use client" required: uses useRouter for row-click navigation.
- * useNavigate → useRouter().push()
- */
 const InvoiceTable = ({ invoices }) => {
   const router = useRouter();
 
   return (
-    <div className="glass-card rounded-2xl overflow-hidden mt-6 shadow-2xl border-white/5">
+    <div className="surface-card rounded-xl overflow-hidden mt-6">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[800px]">
           <thead>
-            <tr className="bg-white/2">
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40">Client</th>
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40">Invoice #</th>
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40">Amount</th>
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40">Status</th>
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40">Date</th>
-              <th className="px-8 py-6 text-[10px] font-bold text-on-surface-variant uppercase tracking-[0.2em] opacity-40 text-right">Actions</th>
+            <tr className="bg-[var(--color-surface-hover)] border-b border-[var(--color-surface-border)]">
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Client</th>
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Invoice #</th>
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Amount</th>
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider">Date</th>
+              <th className="px-6 py-4 text-xs font-semibold text-[var(--color-on-surface-variant)] uppercase tracking-wider text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-[var(--color-surface-border)]">
             {invoices?.map((invoice) => (
               <tr
                 key={invoice?._id || 'unknown'}
-                className="hover:bg-white/10 transition-all group cursor-pointer"
+                className="hover:bg-[var(--color-surface-hover)] transition-colors group cursor-pointer"
                 onClick={() => router.push(`/invoices/${invoice._id}`)}
               >
-                <td className="px-8 py-7">
+                <td className="px-6 py-5">
                   <div className="flex items-center gap-4">
-                    <div className="h-11 w-11 rounded-xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 border border-white/10 flex items-center justify-center shadow-lg">
-                      <span className="text-primary font-bold text-xs">{invoice?.clientId?.name?.charAt(0) || '?'}</span>
+                    <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] border border-[var(--color-surface-border)] flex items-center justify-center">
+                      <span className="text-[var(--color-on-surface)] font-medium text-sm">{invoice?.clientId?.name?.charAt(0) || '?'}</span>
                     </div>
                     <div>
-                      <div className="font-semibold text-sm text-on-surface tracking-tight">{invoice?.clientId?.name || 'Unknown'}</div>
-                      <div className="text-[10px] text-on-surface-variant/60 font-medium tracking-wide uppercase mt-0.5">{invoice?.title || 'Untitled'}</div>
+                      <div className="font-medium text-sm text-[var(--color-on-surface)]">{invoice?.clientId?.name || 'Unknown'}</div>
+                      <div className="text-xs text-[var(--color-on-surface-variant)] mt-0.5">{invoice?.title || 'Untitled'}</div>
                     </div>
                   </div>
                 </td>
-                <td className="px-8 py-7">
-                  <div className="font-mono text-[10px] text-primary/70 font-bold bg-primary/5 px-2.5 py-1 rounded-lg border border-primary/10 inline-block tracking-tighter whitespace-nowrap">
+                <td className="px-6 py-5">
+                  <div className="text-sm text-[var(--color-on-surface-variant)] font-mono bg-[var(--color-surface)] border border-[var(--color-surface-border)] px-2 py-1 rounded">
                     {invoice?.invoiceNumber || '---'}
                   </div>
                 </td>
-
-                <td className="px-8 py-7">
-                  <div className="font-bold text-sm text-on-surface tracking-tight">${invoice?.amount?.toLocaleString?.() || '0'}</div>
+                <td className="px-6 py-5">
+                  <div className="font-medium text-sm text-[var(--color-on-surface)]">${invoice?.amount?.toLocaleString?.() || '0'}</div>
                 </td>
-                <td className="px-8 py-7">
-                  <span className={`inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase border ${
-                    invoice?.status?.toLowerCase() === 'paid' ? 'bg-[#34D399]/5 text-[#34D399] border-[#34D399]/10' :
-                    invoice?.status?.toLowerCase() === 'pending' || invoice?.status?.toLowerCase() === 'sent' ? 'bg-primary/5 text-primary border-primary/20' :
-                    'bg-white/5 text-on-surface-variant border-white/5'
+                <td className="px-6 py-5">
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded text-xs font-medium border ${
+                    invoice?.status?.toLowerCase() === 'paid' ? 'bg-[var(--color-success)]/10 text-[var(--color-success)] border-[var(--color-success)]/20' :
+                    invoice?.status?.toLowerCase() === 'pending' || invoice?.status?.toLowerCase() === 'sent' ? 'bg-[var(--color-warning)]/10 text-[var(--color-warning)] border-[var(--color-warning)]/20' :
+                    'bg-[var(--color-surface)] text-[var(--color-on-surface-variant)] border-[var(--color-surface-border)]'
                   }`}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-current mr-2 opacity-50" />
                     {invoice?.status?.toLowerCase() === 'pending' ? 'Sent' : invoice?.status || 'unknown'}
                   </span>
                 </td>
-
-                <td className="px-8 py-7 text-xs text-on-surface-variant font-medium tracking-wide">{invoice?.date ? <FormattedDate date={invoice.date} /> : 'N/A'}</td>
-                <td className="px-8 py-7 text-right">
-                  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
+                <td className="px-6 py-5 text-sm text-[var(--color-on-surface-variant)]">
+                  {invoice?.date ? <FormattedDate date={invoice.date} /> : 'N/A'}
+                </td>
+                <td className="px-6 py-5 text-right">
+                  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       type="button"
-                      className="p-2.5 glass-card rounded-xl text-on-surface-variant hover:text-primary hover:border-primary/20"
+                      className="p-2 rounded-md text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface)] border border-transparent hover:border-[var(--color-surface-border)]"
                       onClick={(e) => { e.stopPropagation(); router.push(`/invoices/${invoice?._id}`); }}
                     >
                       <Icon name="visibility" size="sm" />
                     </button>
                     <button
                       type="button"
-                      className="p-2.5 glass-card rounded-xl text-on-surface-variant hover:text-primary hover:border-primary/20"
+                      className="p-2 rounded-md text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface)] border border-transparent hover:border-[var(--color-surface-border)]"
                       onClick={(e) => { e.stopPropagation(); router.push(`/invoices/${invoice?._id}`); }}
                     >
                       <Icon name="edit" size="sm" />
@@ -92,6 +85,5 @@ const InvoiceTable = ({ invoices }) => {
     </div>
   );
 };
-
 
 export default InvoiceTable;

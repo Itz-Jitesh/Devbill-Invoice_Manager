@@ -73,7 +73,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="w-full max-w-[480px] glass-card rounded-3xl p-8 md:p-12 z-10 shadow-[0_24px_48px_-12px_rgba(196,192,255,0.04)]">
+    <div className="w-full max-w-[480px] surface-card rounded-3xl p-8 md:p-12 z-10 shadow-[0_24px_48px_-12px_rgba(196,192,255,0.04)]">
       {/* Progress Hint */}
       <div className="flex justify-center mb-8">
         <span className="text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant bg-surface-container-high/40 px-3 py-1 rounded-full border border-outline-variant/20">
@@ -82,8 +82,8 @@ export default function SignupPage() {
       </div>
 
       {/* Header */}
-      <div className="text-center mb-10">
-        <h1 className="font-headline text-3xl md:text-4xl font-light text-on-surface tracking-tight mb-3">
+      <div className="text-[var(--color-on-surface-variant)]enter mb-10">
+        <h1 className="font-headline text-3xl md:text-[var(--color-on-surface-variant)]xl font-light text-on-surface tracking-tight mb-3">
           Create your account
         </h1>
         <p className="text-on-surface-variant font-body font-light text-sm md:text-base">
@@ -93,12 +93,12 @@ export default function SignupPage() {
 
       {/* Status Messages */}
       {serverError && (
-        <div className="mb-6 p-4 rounded-xl bg-error/10 border border-error/20 text-error text-sm font-body text-center">
+        <div className="mb-6 p-4 rounded-xl bg-error/10 border border-error/20 text-[var(--color-on-surface)]rror text-sm font-body text-[var(--color-on-surface-variant)]enter">
           {serverError}
         </div>
       )}
       {successMessage && (
-        <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-body text-center">
+        <div className="mb-6 p-4 rounded-xl bg-primary/10 border border-primary/20 text-primary text-sm font-body text-[var(--color-on-surface-variant)]enter">
           {successMessage} Redirecting to login...
         </div>
       )}
@@ -129,7 +129,7 @@ export default function SignupPage() {
       </form>
 
       {/* Footer */}
-      <div className="mt-10 text-center">
+      <div className="mt-10 text-[var(--color-on-surface-variant)]enter">
         <p className="text-sm font-body text-on-surface-variant/80">
           Already have an account?{' '}
           <Link href="/login" className="text-primary font-medium hover:text-on-surface transition-colors duration-200 ml-1">

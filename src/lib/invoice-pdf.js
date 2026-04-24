@@ -83,7 +83,7 @@ function buildInvoiceMarkup(invoice) {
       (item) => `
         <tr>
           <td>${item.description}</td>
-          <td class="text-center">${item.quantity}</td>
+          <td class="text-[var(--color-on-surface-variant)]enter">${item.quantity}</td>
           <td class="text-right">$${formatCurrency(item.rate)}</td>
           <td class="text-right">$${formatCurrency(item.total)}</td>
         </tr>
@@ -126,7 +126,7 @@ function buildInvoiceMarkup(invoice) {
             <thead>
               <tr>
                 <th>Service Description</th>
-                <th class="text-center">Qty</th>
+                <th class="text-[var(--color-on-surface-variant)]enter">Qty</th>
                 <th class="text-right">Rate</th>
                 <th class="text-right">Amount</th>
               </tr>
@@ -301,7 +301,7 @@ function buildInvoiceStyles() {
       text-align: right;
     }
 
-    .devbill-pdf-root .text-center {
+    .devbill-pdf-root .text-[var(--color-on-surface-variant)]enter {
       text-align: center;
     }
 

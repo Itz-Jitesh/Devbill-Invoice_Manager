@@ -9,13 +9,9 @@ import InvoiceSummaryCard from '@/components/invoices/InvoiceSummaryCard';
 import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 
-/**
- * New Invoice page
- */
 export default function NewInvoicePage() {
   const router = useRouter();
   const { clients, fetchClients, addInvoice, loading } = useData();
-
 
   const [invoice, setInvoice] = useState({
     clientId: '',
@@ -89,25 +85,23 @@ export default function NewInvoicePage() {
   return (
     <div className="relative min-h-screen">
       {/* Header with Breadcrumbs */}
-      <header className="flex justify-between items-center w-full mb-12 animate-in slide-in-from-top-4 duration-1000">
+      <header className="flex justify-between items-center w-full mb-10">
         <div className="flex flex-col">
-          <nav className="flex items-center gap-2 text-[10px] font-label text-on-surface-variant mb-4 tracking-widest uppercase">
-            <span className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/dashboard')}>Dashboard</span>
+          <nav className="flex items-center gap-2 text-xs font-semibold text-[var(--color-on-surface-variant)] mb-3 tracking-widest uppercase">
+            <span className="hover:text-[var(--color-primary)] transition-colors cursor-pointer" onClick={() => router.push('/dashboard')}>Dashboard</span>
             <Icon name="chevron_right" size="xs" />
-            <span className="hover:text-primary transition-colors cursor-pointer" onClick={() => router.push('/invoices')}>Invoices</span>
+            <span className="hover:text-[var(--color-primary)] transition-colors cursor-pointer" onClick={() => router.push('/invoices')}>Invoices</span>
             <Icon name="chevron_right" size="xs" />
-            <span className="text-white">New</span>
+            <span className="text-[var(--color-on-surface)]">New</span>
           </nav>
-          <h2 className="text-6xl font-headline font-bold text-white tracking-tighter text-shadow-glow">New Invoice</h2>
-          <div className="h-1.5 w-12 bg-primary/40 mt-6 rounded-full" />
+          <h2 className="text-[var(--color-on-surface-variant)]xl font-headline font-bold text-[var(--color-on-surface)] tracking-tight">New Invoice</h2>
         </div>
       </header>
 
-
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start pb-20">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-20">
         {/* Left: Core Fields & Line Items */}
-        <div className="lg:col-span-8 flex flex-col gap-10">
+        <div className="lg:col-span-8 flex flex-col gap-8">
           <InvoiceForm invoice={invoice} setInvoice={setInvoice} clients={clients} />
           <LineItemsTable items={items} setItems={setItems} />
         </div>

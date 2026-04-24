@@ -52,9 +52,9 @@ export default function PublicInvoiceView() {
   if (error || !invoice) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
-        <div className="glass-panel rounded-3xl p-12 text-center max-w-md animate-in zoom-in-95 duration-500">
-          <Icon name="receipt_long" size="xl" className="text-error/30 mb-6 scale-150" />
-          <h1 className="font-headline text-3xl font-bold text-white mb-3 tracking-tight">Invoice Not Found</h1>
+        <div className="surface-card rounded-3xl p-12 text-[var(--color-on-surface-variant)]enter max-w-md ">
+          <Icon name="receipt_long" size="xl" className="text-[var(--color-on-surface)]rror/30 mb-6 scale-150" />
+          <h1 className="font-headline text-3xl font-bold text-[var(--color-on-surface)] mb-3 tracking-tight">Invoice Not Found</h1>
           <p className="text-on-surface-variant font-body mb-8 opacity-60 leading-relaxed">
             {error || 'This invoice may have been deleted or the link is incorrect.'}
           </p>
@@ -86,12 +86,12 @@ export default function PublicInvoiceView() {
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case 'paid':
-        return 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30';
+        return 'bg-emerald-500/20 text-[var(--color-on-surface)]merald-400 border-emerald-500/30';
       case 'pending':
       case 'sent':
         return 'bg-primary/20 text-primary border-primary/30';
       case 'overdue':
-        return 'bg-error/20 text-error border-error/30';
+        return 'bg-error/20 text-[var(--color-on-surface)]rror border-error/30';
       default:
         return 'bg-white/10 text-on-surface-variant border-white/20';
     }
@@ -101,15 +101,15 @@ export default function PublicInvoiceView() {
     <div className="min-h-screen bg-background py-12 px-4 sm:px-6">
       <div className="max-w-2xl mx-auto">
         {/* Invoice Card */}
-        <div className="glass-panel rounded-3xl overflow-hidden">
+        <div className="surface-card rounded-3xl overflow-hidden">
           {/* Header */}
-          <div className="bg-surface-container-low/50 p-8 sm:p-10 border-b border-white/5">
+          <div className="bg-surface-container-low/50 p-8 sm:p-10 border-b border-[var(--color-surface-border)]">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
               <div>
                 <p className="text-on-surface-variant/60 font-label text-[10px] uppercase tracking-[0.2em] mb-2 font-bold">
                   Invoice
                 </p>
-                <h1 className="font-headline text-4xl sm:text-5xl font-bold text-white tracking-tighter text-shadow-glow">
+                <h1 className="font-headline text-[var(--color-on-surface-variant)]xl sm:text-5xl font-bold text-[var(--color-on-surface)] tracking-tighter ">
                   {invoice.invoiceNumber || 'INV-0000'}
                 </h1>
               </div>
@@ -143,7 +143,7 @@ export default function PublicInvoiceView() {
             </div>
 
             {/* Invoice Details Grid */}
-            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/5">
+            <div className="grid grid-cols-2 gap-6 pt-6 border-t border-[var(--color-surface-border)]">
               <div>
                 <p className="text-on-surface-variant/60 font-label text-xs uppercase tracking-widest mb-1">
                   Issue Date
@@ -160,7 +160,7 @@ export default function PublicInvoiceView() {
 
             {/* Description */}
             {invoice.title && (
-              <div className="pt-6 border-t border-white/5">
+              <div className="pt-6 border-t border-[var(--color-surface-border)]">
                 <p className="text-on-surface-variant/60 font-label text-xs uppercase tracking-widest mb-2">
                   Description
                 </p>
@@ -169,12 +169,12 @@ export default function PublicInvoiceView() {
             )}
 
             {/* Amount */}
-            <div className="pt-8 border-t border-white/5">
+            <div className="pt-8 border-t border-[var(--color-surface-border)]">
               <div className="flex items-center justify-between">
                 <p className="text-on-surface-variant/60 font-label text-xs uppercase tracking-widest">
                   Total Amount
                 </p>
-                <p className="font-headline text-4xl font-bold text-primary">
+                <p className="font-headline text-[var(--color-on-surface-variant)]xl font-bold text-primary">
                   {formatCurrency(invoice.amount || 0)}
                 </p>
               </div>
@@ -190,7 +190,7 @@ export default function PublicInvoiceView() {
             )}
           </div>
 
-          <div className="bg-surface-container-low/30 p-8 text-center border-t border-white/5">
+          <div className="bg-surface-container-low/30 p-8 text-[var(--color-on-surface-variant)]enter border-t border-[var(--color-surface-border)]">
             <p className="text-on-surface-variant/40 font-body text-[10px] uppercase tracking-[0.2em] font-bold leading-relaxed">
               Powered by DevBill • Professional Invoice Sharing<br/>
               Support: itsjitesh.work@gmail.com
@@ -200,7 +200,7 @@ export default function PublicInvoiceView() {
         </div>
 
         {/* Security Notice */}
-        <div className="mt-8 text-center animate-in fade-in duration-1000 delay-500">
+        <div className="mt-8 text-[var(--color-on-surface-variant)]enter  delay-500">
           <p className="text-on-surface-variant/30 font-body text-[10px] uppercase tracking-widest flex items-center justify-center gap-3 font-bold">
             <Icon name="lock" size="sm" className="text-primary/40" />
             Secure view-only transaction

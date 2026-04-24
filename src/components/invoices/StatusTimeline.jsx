@@ -28,13 +28,13 @@ const StatusTimeline = ({ status = 'sent', date }) => {
 
   return (
     <section className="max-w-4xl">
-      <h4 className="text-[10px] uppercase tracking-[0.4em] text-on-surface-variant font-label mb-10 font-bold px-4 text-shadow-glow">
+      <h4 className="text-[10px] uppercase tracking-[0.4em] text-on-surface-variant font-label mb-10 font-bold px-4 ">
         Document Lifecycle
       </h4>
 
-      <div className="flex items-center gap-12 glass-panel p-10 rounded-[32px] shadow-2xl border-white/5 relative overflow-hidden backdrop-blur-3xl">
+      <div className="flex items-center gap-12 surface-card p-10 rounded-[32px] shadow-2xl border-[var(--color-surface-border)] relative overflow-hidden ">
         {/* Background Glow */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
+        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5  rounded-full pointer-events-none" />
 
         {steps.map((step, index) => (
           <div key={step.label} className="flex items-center gap-12 flex-1 last:flex-none">
@@ -44,17 +44,17 @@ const StatusTimeline = ({ status = 'sent', date }) => {
                 <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-all border ${
                   step.isCompleted
                     ? 'bg-primary/20 text-primary shadow-[0_0_30px_rgba(196,192,255,0.3)] border-primary/40'
-                    : 'bg-white/5 border-white/10 text-on-surface-variant'
+                    : 'bg-[var(--color-surface)] border-[var(--color-surface-border)] text-on-surface-variant'
                 }`}>
                   <Icon name={step.icon} size="lg" />
                 </div>
                 {step.isCompleted && (
-                  <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full -z-10 animate-pulse" />
+                  <div className="absolute -inset-4 bg-primary/10 blur-2xl rounded-full -z-10 " />
                 )}
               </div>
 
               <div>
-                <p className={`font-bold text-lg font-headline tracking-tight ${step.isActive ? 'text-white' : 'text-on-surface-variant'}`}>
+                <p className={`font-bold text-lg font-headline tracking-tight ${step.isActive ? 'text-[var(--color-on-surface)]' : 'text-on-surface-variant'}`}>
                   {step.label}
                 </p>
                 <p className="text-[10px] text-on-surface-variant/60 font-label uppercase tracking-[0.2em] mt-1.5 font-medium">

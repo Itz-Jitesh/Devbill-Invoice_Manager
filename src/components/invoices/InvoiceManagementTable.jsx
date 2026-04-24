@@ -27,14 +27,14 @@ const InvoiceManagementTable = ({ invoices }) => {
   };
 
   return (
-    <div className="glass-panel rounded-xl overflow-x-auto mb-12 shadow-2xl border border-white/5">
+    <div className="surface-card rounded-xl overflow-x-auto mb-12 shadow-2xl border border-[var(--color-surface-border)]">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="border-b border-white/5 bg-white/[0.02]">
+          <tr className="border-b border-[var(--color-surface-border)] bg-[var(--color-surface)]">
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold">Invoice Number</th>
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold">Client Name</th>
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold">Amount</th>
-            <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold text-center">Status</th>
+            <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold text-[var(--color-on-surface-variant)]enter">Status</th>
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold">Issue Date</th>
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold">Due Date</th>
             <th className="px-8 py-6 text-[10px] font-label uppercase tracking-[0.2em] text-on-surface-variant font-bold text-right">Action</th>
@@ -49,16 +49,16 @@ const InvoiceManagementTable = ({ invoices }) => {
                 onClick={() => router.push(`/invoices/${invoice._id}`)}
               >
                 <td className="px-8 py-8">
-                  <div className="font-mono text-xs text-on-surface-variant font-bold bg-white/5 px-2 py-1 rounded border border-white/5 inline-block whitespace-nowrap">
+                  <div className="font-mono text-xs text-on-surface-variant font-bold bg-[var(--color-surface)] px-2 py-1 rounded border border-[var(--color-surface-border)] inline-block whitespace-nowrap">
                     {invoice.invoiceNumber || '---'}
                   </div>
                 </td>
 
                 <td className="px-8 py-8">
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border border-white/5 ${
+                    <div className={`w-8 h-8 rounded flex items-center justify-center text-[10px] font-bold border border-[var(--color-surface-border)] ${
                       invoice.status === 'paid' ? 'bg-secondary/10 text-secondary' :
-                      invoice.status === 'overdue' ? 'bg-error/10 text-error' :
+                      invoice.status === 'overdue' ? 'bg-error/10 text-[var(--color-on-surface)]rror' :
                       invoice.status === 'pending' || invoice.status === 'sent' ? 'bg-tertiary/10 text-tertiary' :
                       'bg-surface-variant text-on-surface-variant'
                     }`}>
@@ -67,15 +67,15 @@ const InvoiceManagementTable = ({ invoices }) => {
                     <span className="font-body text-on-surface group-hover:text-primary transition-colors">{invoice.clientId?.name || 'Unknown Client'}</span>
                   </div>
                 </td>
-                <td className="px-8 py-8 font-headline text-lg font-bold text-white">
+                <td className="px-8 py-8 font-headline text-lg font-bold text-[var(--color-on-surface)]">
                   ${(invoice.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </td>
-                <td className="px-8 py-8 text-center">
+                <td className="px-8 py-8 text-[var(--color-on-surface-variant)]enter">
                   <span className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border ${
                     invoice.status?.toLowerCase() === 'paid' ? 'bg-secondary/10 text-secondary border-secondary/20' :
                     invoice.status?.toLowerCase() === 'pending' || invoice.status?.toLowerCase() === 'sent' ? 'bg-primary/10 text-primary border-primary/20' :
-                    invoice.status?.toLowerCase() === 'overdue' ? 'bg-error/10 text-error border-error/20' :
-                    'bg-white/5 text-on-surface-variant border-white/10'
+                    invoice.status?.toLowerCase() === 'overdue' ? 'bg-error/10 text-[var(--color-on-surface)]rror border-error/20' :
+                    'bg-[var(--color-surface)] text-on-surface-variant border-[var(--color-surface-border)]'
                   }`}>
                     {invoice.status?.toLowerCase() === 'pending' ? 'Sent' : invoice.status}
                   </span>
@@ -97,7 +97,7 @@ const InvoiceManagementTable = ({ invoices }) => {
                     )}
                     <button
                       type="button"
-                      className="p-2 hover:bg-white/10 rounded-lg transition-colors text-on-surface-variant hover:text-white"
+                      className="p-2 hover:bg-white/10 rounded-lg transition-colors text-on-surface-variant hover:text-[var(--color-on-surface)]"
                       onClick={(e) => { e.stopPropagation(); router.push(`/invoices/${invoice._id}`); }}
                       title="View Details"
                     >
@@ -105,7 +105,7 @@ const InvoiceManagementTable = ({ invoices }) => {
                     </button>
                     <button
                       type="button"
-                      className="p-2 hover:bg-error/20 rounded-lg transition-colors text-error"
+                      className="p-2 hover:bg-error/20 rounded-lg transition-colors text-[var(--color-on-surface)]rror"
                       onClick={(e) => handleDelete(e, invoice._id)}
                       title="Delete Invoice"
                     >
@@ -117,7 +117,7 @@ const InvoiceManagementTable = ({ invoices }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="7" className="px-8 py-20 text-center">
+              <td colSpan="7" className="px-8 py-20 text-[var(--color-on-surface-variant)]enter">
                 <div className="flex flex-col items-center gap-4 opacity-30">
                   <Icon name="receipt_long" size="xl" className="scale-150 mb-4" />
                   <p className="font-label uppercase tracking-[0.2em] text-[10px] font-bold">No records found</p>
