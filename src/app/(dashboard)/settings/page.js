@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import Icon from '@/components/ui/Icon';
 import Button from '@/components/ui/Button';
@@ -21,22 +22,44 @@ export default function SettingsPage() {
     { month: 'Aug', height: '90%', amount: '$13,100' },
   ];
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.15, ease: "easeOut" }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 60, damping: 20 }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen pb-24">
+    <motion.div 
+      initial="hidden" 
+      animate="visible" 
+      variants={containerVariants}
+      className="relative min-h-screen pb-24"
+    >
       {/* Page Header */}
-      <section className="mb-10">
+      <motion.section variants={itemVariants} className="mb-10">
         <h2 className="font-headline text-[var(--color-on-surface-variant)]xl font-bold tracking-tight text-[var(--color-on-surface)] mb-2">
           Settings
         </h2>
         <p className="text-[var(--color-on-surface-variant)] max-w-md font-body">
           Customize your workspace experience and view performance summaries.
         </p>
-      </section>
+      </motion.section>
 
       <div className="space-y-8 max-w-4xl">
 
         {/* Account Information Section */}
-        <section className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
+        <motion.section variants={itemVariants} className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
           <h3 className="font-headline text-xl mb-6 text-[var(--color-on-surface)] font-bold">Account Information</h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-2">
@@ -47,7 +70,7 @@ export default function SettingsPage() {
                 type="text"
                 defaultValue={displayName}
                 placeholder="Enter your name"
-                className="w-full bg-[var(--color-background)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body text-sm"
+                className="input-base"
               />
             </div>
             <div className="space-y-2">
@@ -58,7 +81,7 @@ export default function SettingsPage() {
                 type="email"
                 defaultValue={user?.email || ''}
                 placeholder="Enter your email"
-                className="w-full bg-[var(--color-background)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body text-sm"
+                className="input-base"
               />
             </div>
           </div>
@@ -67,10 +90,10 @@ export default function SettingsPage() {
               Save Changes
             </Button>
           </div>
-        </section>
+        </motion.section>
 
         {/* Earnings Overview Section */}
-        <section className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
+        <motion.section variants={itemVariants} className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
           <div className="flex justify-between items-start mb-8">
             <div>
               <h3 className="font-headline text-xl mb-1 text-[var(--color-on-surface)] font-bold">Earnings Overview</h3>
@@ -109,10 +132,10 @@ export default function SettingsPage() {
               <span key={data.month}>{data.month}</span>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Notification Preferences */}
-        <section className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
+        <motion.section variants={itemVariants} className="surface-card rounded-xl p-8 border border-[var(--color-surface-border)]">
           <h3 className="font-headline text-xl mb-6 text-[var(--color-on-surface)] font-bold">Notifications</h3>
           <div className="space-y-4">
             {[
@@ -140,10 +163,10 @@ export default function SettingsPage() {
               </div>
             ))}
           </div>
-        </section>
+        </motion.section>
 
         {/* Danger Zone */}
-        <section className="surface-card rounded-xl p-8 border border-[var(--color-error)]/20 bg-[var(--color-error)]/5">
+        <motion.section variants={itemVariants} className="surface-card rounded-xl p-8 border border-[var(--color-error)]/20 bg-[var(--color-error)]/5">
           <h3 className="font-headline text-xl mb-4 text-[var(--color-error)] font-bold">Danger Zone</h3>
           <div className="flex items-center justify-between">
             <div>
@@ -154,8 +177,8 @@ export default function SettingsPage() {
               Delete Account
             </Button>
           </div>
-        </section>
+        </motion.section>
       </div>
-    </div>
+    </motion.div>
   );
 }

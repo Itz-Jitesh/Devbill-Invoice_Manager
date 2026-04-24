@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useData } from '@/context/DataContext';
 import ClientGrid from '@/components/clients/ClientGrid';
 import Icon from '@/components/ui/Icon';
@@ -40,11 +41,33 @@ export default function ClientsPage() {
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.15, ease: "easeOut" }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 60, damping: 20 }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen">
+    <motion.div 
+      initial="hidden" 
+      animate="visible" 
+      variants={containerVariants}
+      className="relative min-h-screen"
+    >
       <main className="max-w-[1400px] mx-auto pt-8 pb-24">
         {/* Page Header */}
-        <header className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-12">
+        <motion.header variants={itemVariants} className="flex flex-col md:flex-row items-start md:items-end justify-between gap-8 mb-12">
           <div>
             <h2 className="font-headline text-[var(--color-on-surface-variant)]xl font-bold text-[var(--color-on-surface)] tracking-tight mb-2">
               Clients
@@ -61,25 +84,25 @@ export default function ClientsPage() {
             <Icon name="person_add" size="sm" />
             Add Client
           </Button>
-        </header>
+        </motion.header>
 
         {/* Data States */}
         {loading.clients ? (
-          <div className="flex flex-col items-center justify-center py-40 text-[var(--color-on-surface-variant)]">
+          <motion.div variants={itemVariants} className="flex flex-col items-center justify-center py-40 text-[var(--color-on-surface-variant)]">
             <div className="h-12 w-12 rounded-full border-4 border-[var(--color-surface-border)] border-t-[var(--color-primary)] animate-spin mb-6" />
             <p className="font-semibold text-sm">Synchronizing Client Records...</p>
-          </div>
+          </motion.div>
         ) : error ? (
-          <div className="surface-card rounded-xl p-12 text-[var(--color-on-surface-variant)]enter border-[var(--color-error)] mb-12 bg-[var(--color-error)]/5">
+          <motion.div variants={itemVariants} className="surface-card rounded-xl p-12 text-center border-[var(--color-error)] mb-12 bg-[var(--color-error)]/5">
             <div className="h-16 w-16 bg-[var(--color-error)]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[var(--color-error)]/20">
               <Icon name="sync_problem" size="lg" className="text-[var(--color-error)]" />
             </div>
             <h3 className="text-xl font-headline font-bold text-[var(--color-on-surface)] mb-2">Systems Out of Sync</h3>
             <p className="text-[var(--color-on-surface-variant)] font-body mb-8 max-w-md mx-auto">{error}</p>
             <Button variant="outline" onClick={() => fetchClients(true)}>Retry Connection</Button>
-          </div>
+          </motion.div>
         ) : filteredClients.length === 0 ? (
-          <div className="surface-card rounded-xl p-16 text-[var(--color-on-surface-variant)]enter">
+          <motion.div variants={itemVariants} className="surface-card rounded-xl p-16 text-center">
             <div className="h-16 w-16 bg-[var(--color-surface-hover)] rounded-full flex items-center justify-center mx-auto mb-6">
               <Icon name="search_off" size="xl" className="text-[var(--color-on-surface-variant)]" />
             </div>
@@ -88,16 +111,23 @@ export default function ClientsPage() {
             {searchTerm && (
               <Button variant="outline" onClick={() => setSearchTerm('')}>Clear Filters</Button>
             )}
-          </div>
+          </motion.div>
         ) : (
-          <ClientGrid clients={filteredClients} onAddClient={() => setIsModalOpen(true)} />
+          <motion.div variants={itemVariants}>
+            <ClientGrid clients={filteredClients} onAddClient={() => setIsModalOpen(true)} />
+          </motion.div>
         )}
       </main>
 
       {/* Add Client Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50">
-          <div className="w-full max-w-lg surface-card rounded-xl p-8 border border-[var(--color-surface-border)] shadow-xl">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ type: "spring", stiffness: 300, damping: 25 }}
+            className="w-full max-w-lg surface-card rounded-xl p-8 border border-[var(--color-surface-border)] shadow-xl"
+          >
             <h3 className="text-2xl font-headline text-[var(--color-on-surface)] mb-1 font-bold">New Client</h3>
             <p className="text-[var(--color-on-surface-variant)] mb-6 text-sm">Add a new commercial contact to your manager.</p>
             
@@ -111,7 +141,7 @@ export default function ClientsPage() {
                   value={newClient.name}
                   onChange={(e) => setNewClient({...newClient, name: e.target.value})}
                   placeholder="e.g. Lukas Sterling"
-                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
+                  className="input-base"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -121,7 +151,7 @@ export default function ClientsPage() {
                   value={newClient.email}
                   onChange={(e) => setNewClient({...newClient, email: e.target.value})}
                   placeholder="name@company.com"
-                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
+                  className="input-base"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
@@ -131,7 +161,7 @@ export default function ClientsPage() {
                   value={newClient.company}
                   onChange={(e) => setNewClient({...newClient, company: e.target.value})}
                   placeholder="e.g. Nova Horizon Systems"
-                  className="bg-[var(--color-surface)] border border-[var(--color-surface-border)] rounded-md px-4 py-3 text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)] focus:outline-none focus:ring-1 focus:ring-[var(--color-primary)] focus:border-[var(--color-primary)] transition-all font-body"
+                  className="input-base"
                 />
               </div>
 
@@ -153,13 +183,18 @@ export default function ClientsPage() {
                 </Button>
               </div>
             </form>
-          </div>
+          </motion.div>
         </div>
       )}
 
       {/* Floating Search Bar */}
       <div className="fixed bottom-8 left-[calc(50%+128px)] -translate-x-1/2 w-full max-w-xl px-4 z-50">
-        <div className="surface-card rounded-full flex items-center p-2 shadow-lg border border-[var(--color-surface-border)] focus-within:border-[var(--color-primary)] transition-all">
+        <motion.div 
+          initial={{ y: 50, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 20, delay: 0.2 }}
+          className="surface-card rounded-full flex items-center p-2 shadow-lg border border-[var(--color-surface-border)] focus-within:border-[var(--color-primary)] transition-all"
+        >
           <Icon name="search" size="md" className="ml-3 text-[var(--color-on-surface-variant)]" />
           <input
             type="text"
@@ -171,8 +206,8 @@ export default function ClientsPage() {
           <kbd className="hidden md:flex items-center gap-1 bg-[var(--color-surface-hover)] px-2 py-1 rounded-md text-xs font-medium text-[var(--color-on-surface-variant)] mr-1">
             <span>⌘</span>K
           </kbd>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }

@@ -2,17 +2,13 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useData } from '@/context/DataContext';
 import InvoiceManagementTable from '@/components/invoices/InvoiceManagementTable';
 import InvoiceSearchFilters from '@/components/invoices/InvoiceSearchFilters';
 import Icon from '@/components/ui/Icon';
 import Button from '@/components/ui/Button';
 
-
-/**
- * Invoices page
- * "use client" required: useData, useMemo, useRouter.
- */
 export default function InvoicesPage() {
   const router = useRouter();
   const { invoices, loading, error, fetchInvoices } = useData();
@@ -20,12 +16,10 @@ export default function InvoicesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setSelectedStatus] = useState('All');
 
-  // Trigger one-time fetch on mount
   useEffect(() => {
     fetchInvoices();
   }, [fetchInvoices]);
 
-  // Filtering logic
   const filteredInvoices = useMemo(() => {
     let result = [...invoices];
     if (selectedStatus === 'All') {
@@ -39,7 +33,6 @@ export default function InvoicesPage() {
       });
     }
 
-
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
@@ -52,76 +45,92 @@ export default function InvoicesPage() {
     return result;
   }, [searchQuery, selectedStatus, invoices]);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.15, ease: "easeOut" }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 60, damping: 20 }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen">
+    <motion.div 
+      initial="hidden" 
+      animate="visible" 
+      variants={containerVariants}
+      className="relative min-h-screen"
+    >
       <main className="max-w-[1400px] mx-auto pt-8 pb-20">
         {/* Page Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-20 ">
+        <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-12">
           <div className="max-w-2xl">
-            <h2 className="font-headline text-[var(--color-on-surface-variant)]xl font-bold text-[var(--color-on-surface)] tracking-tighter mb-6 leading-tight ">
+            <h2 className="font-headline text-[var(--color-on-surface-variant)]xl font-bold text-[var(--color-on-surface)] tracking-tighter mb-2 leading-tight">
               Invoices
             </h2>
-            <p className="text-on-surface-variant text-xl font-body leading-relaxed max-w-lg opacity-60">
+            <p className="text-[var(--color-on-surface-variant)] text-lg font-body leading-relaxed max-w-lg">
               Manage your commercial relationships and monitor cash flow through our curated financial interface.
             </p>
           </div>
-          <button
+          <Button
             onClick={() => router.push('/invoices/new')}
-            className="group relative bg-white/[0.03] hover:bg-white/[0.08] text-[var(--color-on-surface)] border border-[var(--color-surface-border)] px-10 py-5 rounded-2xl font-label font-bold text-sm tracking-[0.2em] uppercase transition-all hover:scale-105 active:scale-95 shadow-2xl overflow-hidden"
+            variant="primary"
+            className="flex items-center gap-2"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-            <span className="relative z-10 flex items-center gap-3">
-              <Icon name="add" size="sm" />
-              Create Invoice
-            </span>
-          </button>
-        </div>
+            <Icon name="add" size="sm" />
+            Create Invoice
+          </Button>
+        </motion.div>
 
         {/* Filters */}
-        <div className="mb-12 surface-card p-2 rounded-2xl">
+        <motion.div variants={itemVariants} className="mb-12">
           <InvoiceSearchFilters
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             selectedStatus={selectedStatus}
             setSelectedStatus={setSelectedStatus}
           />
-        </div>
+        </motion.div>
 
         {/* Data Content */}
         {loading.invoices ? (
-          <div className="surface-card rounded-3xl overflow-hidden mb-12 shadow-2xl border border-[var(--color-surface-border)] p-12 space-y-10">
+          <motion.div variants={itemVariants} className="surface-card rounded-xl overflow-hidden mb-12 p-8 space-y-6">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="flex items-center gap-12 ">
-                <div className="h-12 w-12 bg-[var(--color-surface)] rounded-xl" />
-                <div className="space-y-3 flex-1">
-                  <div className="h-3 w-48 bg-white/10 rounded-full" />
-                  <div className="h-2 w-32 bg-[var(--color-surface)] rounded-full" />
+              <div key={i} className="flex items-center gap-6 opacity-50">
+                <div className="h-10 w-10 bg-[var(--color-surface-border)] rounded-md animate-pulse" />
+                <div className="space-y-2 flex-1 animate-pulse">
+                  <div className="h-2 w-32 bg-[var(--color-surface-border)] rounded-full" />
+                  <div className="h-2 w-24 bg-[var(--color-surface-border)] rounded-full" />
                 </div>
-                <div className="h-8 w-24 bg-[var(--color-surface)] rounded-full" />
               </div>
             ))}
-          </div>
+          </motion.div>
         ) : error ? (
-          <div className="surface-card rounded-3xl p-20 text-[var(--color-on-surface-variant)]enter border-error/10 mb-12 shadow-2xl bg-error/[0.02] ">
-            <div className="h-20 w-20 bg-error/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-error/20">
-              <Icon name="sync_problem" size="lg" className="text-[var(--color-on-surface)]rror" />
+          <motion.div variants={itemVariants} className="surface-card rounded-xl p-16 text-center border-[var(--color-error)] mb-12 bg-[var(--color-error)]/5">
+            <div className="h-16 w-16 bg-[var(--color-error)]/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-[var(--color-error)]/20">
+              <Icon name="sync_problem" size="lg" className="text-[var(--color-error)]" />
             </div>
-            <h3 className="text-3xl font-headline font-bold text-[var(--color-on-surface)] mb-3 tracking-tight">Systems Out of Sync</h3>
-            <p className="text-on-surface-variant font-body mb-10 max-w-md mx-auto opacity-70 leading-relaxed">{error}</p>
-            <Button variant="outline" onClick={() => fetchInvoices(true)} className="px-10 py-5 rounded-2xl border-error/30 text-[var(--color-on-surface)]rror hover:bg-error/10">
+            <h3 className="text-xl font-headline font-bold text-[var(--color-on-surface)] mb-2 tracking-tight">Systems Out of Sync</h3>
+            <p className="text-[var(--color-on-surface-variant)] font-body mb-8 max-w-md mx-auto leading-relaxed">{error}</p>
+            <Button variant="outline" onClick={() => fetchInvoices(true)} className="mx-auto text-[var(--color-error)] border-[var(--color-error)]/30 hover:bg-[var(--color-error)]/10">
               Retry Synchronization
             </Button>
-          </div>
+          </motion.div>
         ) : (
-          <div className="stagger-load">
+          <motion.div variants={itemVariants}>
             <InvoiceManagementTable invoices={filteredInvoices} />
-          </div>
+          </motion.div>
         )}
       </main>
-
-      {/* Background Decor */}
-      <div className="fixed top-[-10%] right-[-10%] w-[60vw] h-[60vw] rounded-full bg-primary/[0.03]  pointer-events-none -z-10" />
-    </div>
+    </motion.div>
   );
 }
 

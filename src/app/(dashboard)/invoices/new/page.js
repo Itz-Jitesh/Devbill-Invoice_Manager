@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useData } from '@/context/DataContext';
 import InvoiceForm from '@/components/invoices/InvoiceForm';
 import LineItemsTable from '@/components/invoices/LineItemsTable';
 import InvoiceSummaryCard from '@/components/invoices/InvoiceSummaryCard';
-import Button from '@/components/ui/Button';
 import Icon from '@/components/ui/Icon';
 
 export default function NewInvoicePage() {
@@ -82,10 +82,32 @@ export default function NewInvoicePage() {
     alert('Preview mode is under development.');
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.15, ease: "easeOut" }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { type: "spring", stiffness: 60, damping: 20 }
+    }
+  };
+
   return (
-    <div className="relative min-h-screen">
+    <motion.div 
+      initial="hidden" 
+      animate="visible" 
+      variants={containerVariants}
+      className="relative min-h-screen"
+    >
       {/* Header with Breadcrumbs */}
-      <header className="flex justify-between items-center w-full mb-10">
+      <motion.header variants={itemVariants} className="flex justify-between items-center w-full mb-10">
         <div className="flex flex-col">
           <nav className="flex items-center gap-2 text-xs font-semibold text-[var(--color-on-surface-variant)] mb-3 tracking-widest uppercase">
             <span className="hover:text-[var(--color-primary)] transition-colors cursor-pointer" onClick={() => router.push('/dashboard')}>Dashboard</span>
@@ -96,18 +118,18 @@ export default function NewInvoicePage() {
           </nav>
           <h2 className="text-[var(--color-on-surface-variant)]xl font-headline font-bold text-[var(--color-on-surface)] tracking-tight">New Invoice</h2>
         </div>
-      </header>
+      </motion.header>
 
       {/* Two Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start pb-20">
         {/* Left: Core Fields & Line Items */}
-        <div className="lg:col-span-8 flex flex-col gap-8">
+        <motion.div variants={itemVariants} className="lg:col-span-8 flex flex-col gap-8">
           <InvoiceForm invoice={invoice} setInvoice={setInvoice} clients={clients} />
           <LineItemsTable items={items} setItems={setItems} />
-        </div>
+        </motion.div>
 
         {/* Right: Summary & Actions */}
-        <div className="lg:col-span-4">
+        <motion.div variants={itemVariants} className="lg:col-span-4">
           <InvoiceSummaryCard
             invoice={invoice}
             setInvoice={setInvoice}
@@ -116,8 +138,8 @@ export default function NewInvoicePage() {
             onSave={handleSaveInvoice}
             onPreview={handlePreview}
           />
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
